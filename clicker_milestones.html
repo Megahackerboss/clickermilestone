@@ -621,10 +621,10 @@
 
         // --- 4. DATA ARRAY INITIALIZATION ---
         const MILESTONES = [
-            { req: 100, type: 'clicks', desc: 'Clicks boosts atom gain.', formulaText: 'log25(CM*25)', calc: (cm) => logBase(cm * 25, 25) },
-            { req: 1000, type: 'clicks', desc: 'Clicks boosts energy gain.', formulaText: 'log25(CM*5)', calc: (cm) => logBase(cm * 5, 25) },
-            { req: 3000, type: 'clicks', desc: 'Clicks boosts itself.', formulaText: 'log8(CM/40)', calc: (cm) => logBase(cm / 40, 8) },
-            { req: 10000, type: 'clicks', desc: 'Clicks boosts atom gain again.', formulaText: 'log47(CM)', calc: (cm) => logBase(cm, 47) },
+            { req: 40, type: 'clicks', desc: 'Clicks boosts atom gain.', formulaText: 'log25(CM*25)', calc: (cm) => logBase(cm * 25, 25) },
+            { req: 800, type: 'clicks', desc: 'Clicks boosts energy gain.', formulaText: 'log25(CM*5)', calc: (cm) => logBase(cm * 5, 25) },
+            { req: 2200, type: 'clicks', desc: 'Clicks boosts itself.', formulaText: 'log8(CM/40)', calc: (cm) => logBase(cm / 40, 8) },
+            { req: 7000, type: 'clicks', desc: 'Clicks boosts atom gain again.', formulaText: 'log47(CM)', calc: (cm) => logBase(cm, 47) },
             { req: 5, type: 'level', desc: 'Click Level boosts clicks.', formulaText: 'Lvl/2', calc: (_, lvl) => lvl / 2 },
             { req: 200000, type: 'clicks', desc: 'Clicks boosts Power.', formulaText: 'log333(CM/33)', calc: (cm) => logBase(cm / 33, 333) },
             { req: 500000, type: 'clicks', desc: 'Clicks boosts itself again.', formulaText: 'log10(CM/4000), MAX 20x', calc: (cm) => Math.min(20, logBase(cm / 4000, 10)) },
