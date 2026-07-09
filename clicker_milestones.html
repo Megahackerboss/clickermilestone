@@ -323,6 +323,26 @@
             border-left-color: #ff9f43;
             color: #ff9f43;
         }
+		.prestige-btn {
+    width: 100%;
+    background-color: #ff9f43 !important;
+    color: #000 !important;
+    font-weight: bold;
+    border: none;
+    padding: 8px;
+    font-size: 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.prestige-btn:hover:not(:disabled) {
+    background-color: #ffb063 !important;
+}
+.prestige-btn:disabled {
+    background-color: #151515 !important;
+    color: #444 !important;
+    cursor: not-allowed;
+}
     </style>
 </head>
 <body>
@@ -406,7 +426,7 @@
             <div class="prestige-panel" id="prestige-panel" style="display:none;">
                 <div style="font-weight: bold; font-size: 14px; margin-bottom: 5px; color: #ff9f43;">Milestone Shift</div>
                 <div style="font-size: 11px; color: #aaa; margin-bottom: 10px;">Reset your clicks, click level, sub-resources, upgrades and bonds to gain a permanent Milestone Point.</div>
-                <button class="upgrade-btn" id="mp-reset-btn" onclick="performMPReset()" style="width: 100%; background-color: #ff9f43; color: #000; font-weight: bold;">Reset for +1 MP<br><span style="font-size: 10px;" id="mp-req-display">(Requires 10.000Sp Clicks)</span></button>
+                <button class="prestige-btn" id="mp-reset-btn" onclick="performMPReset()">Reset for +1 MP<br><span style="font-size: 10px;" id="mp-req-display">(Requires 10.000Sp Clicks)</span></button>
             </div>
 
             <div class="upgrades-grid" style="margin-top: 0; width: 100%;">
@@ -1018,12 +1038,49 @@
 
         // --- 8. PRESTIGE AND LIFETIME SAVINGS ---
         function getMPRequirement() {
-            let base = 1.55; // Reduced from 1.65 (65% growth) to 1.55 (55% growth)
-            if (isQEMilestoneUnlocked(6)) {
-                base = getQEMilestoneEffect(6);
-            }
-            return 1e25 * Math.pow(base, state.milestonePoints);
+    try {
+        let base = 1.55;
+        if (isQEMilestoneUnlocked(6)) {
+            base = getQEMilestoneEffect(6);
         }
+        // Zabezpieczenie przed wartościami niebędącymi liczbami
+        if (isNaN(base) || base <= 0) base = 1.55;
+        return 1e25 * Math.pow(base, state.milestonePoints);
+    } catch (e) {
+        console.error("Error in getMPRequirement, falling back to base 1.55:", e);
+        return 1e25 * Math.pow(1.55, state.milestonePoints);
+    }
+}
+function performMPReset() {
+    try {
+        const req = getMPRequirement();
+        if (state.clicks >= req) {
+            if (window.confirm("Resetting will convert your clicks into 1 Milestone Point. Are you ready to shift into a new era?")) {
+                state.milestonePoints++;
+                
+                state.clicks = 0;
+                state.clickLevel = 0;
+                state.atoms = 0;
+                state.energy = 0;
+                state.power = 0;
+                state.matter = 0;
+                state.molecules = 0;
+
+                state.upgrades = { surge: 0, autoclick: 0, level: 0, catalyst: 0 };
+                state.bonds = { covalent: 0, ionic: 0, metallic: 0 };
+                
+                state.lastTick = Date.now();
+                updateUI();
+            }
+        } else {
+            // Informacja diagnostyczna, gdyby jakimś cudem kliknięto zablokowany przycisk
+            alert(`You do not have enough clicks yet! You need ${format(req)} clicks, but you only have ${format(state.clicks)}.`);
+        }
+    } catch (e) {
+        console.error("Error during MP Reset:", e);
+        alert("An error occurred during reset: " + e.message);
+    }
+}
 
         // --- 8b. UPDATE EXPORT/IMPORT MECHANICS ---
         function exportSave() {
