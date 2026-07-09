@@ -332,13 +332,13 @@
 </head>
 <body>
 
-    <!-- Tab Bar -->
+    <!-- Dynamic Robust Tabs (Programmatic API Bind) -->
     <div class="tabs-container">
-        <button class="tab-btn active" onclick="switchTab('click-mastery')">Click Mastery</button>
-        <button class="tab-btn" onclick="switchTab('click-surge')">Click Surge Multiplier</button>
-        <button class="tab-btn" id="mol-tab-btn" onclick="switchTab('molecular')" style="display:none;">Molecular Engineering</button>
-        <button class="tab-btn" id="qe-tab-btn" onclick="switchTab('quantum-energy')" style="display:none;">Quantum Energy</button>
-        <button class="tab-btn" onclick="switchTab('settings')">Settings</button>
+        <button class="tab-btn active" data-tab="click-mastery">Click Mastery</button>
+        <button class="tab-btn" data-tab="click-surge">Click Surge Multiplier</button>
+        <button class="tab-btn" id="mol-tab-btn" data-tab="molecular" style="display:none;">Molecular Engineering</button>
+        <button class="tab-btn" id="qe-tab-btn" data-tab="quantum-energy" style="display:none;">Quantum Energy</button>
+        <button class="tab-btn" data-tab="settings">Settings</button>
     </div>
 
     <!-- Sub-resources Badges -->
@@ -378,28 +378,28 @@
                     <div class="upgrade-title">Click Surge Upgrade</div>
                     <div class="upgrade-desc">Multiplies Click gain by 1.34x per level.</div>
                 </div>
-                <button class="upgrade-btn" id="upg-surge" onclick="buyUpgrade('surge')">Buy (10 Atoms)</button>
+                <button class="upgrade-btn" id="upg-surge">Buy (10 Atoms)</button>
             </div>
             <div class="upgrade-card">
                 <div>
                     <div class="upgrade-title">Quantum Auto-Clicker</div>
                     <div class="upgrade-desc">Clicks the button automatically per level (enhanced by QE).</div>
                 </div>
-                <button class="upgrade-btn" id="upg-autoclick" onclick="buyUpgrade('autoclick')">Buy (50 Energy)</button>
+                <button class="upgrade-btn" id="upg-autoclick">Buy (50 Energy)</button>
             </div>
             <div class="upgrade-card">
                 <div>
                     <div class="upgrade-title">Sub-Atomic Overclocker</div>
                     <div class="upgrade-desc">Increases base Click Level exponent by +0.005 per level.</div>
                 </div>
-                <button class="upgrade-btn" id="upg-level" onclick="buyUpgrade('level')">Buy (10 Power)</button>
+                <button class="upgrade-btn" id="upg-level">Buy (10 Power)</button>
             </div>
             <div class="upgrade-card">
                 <div>
                     <div class="upgrade-title">Dimensional Catalyst</div>
                     <div class="upgrade-desc">Multiplies ALL sub-resource gains by 1.5x per level. (Matter cost)</div>
                 </div>
-                <button class="upgrade-btn" id="upg-catalyst" onclick="buyUpgrade('catalyst')">Buy (10 Matter)</button>
+                <button class="upgrade-btn" id="upg-catalyst">Buy (10 Matter)</button>
             </div>
         </div>
     </div>
@@ -412,7 +412,7 @@
             <div class="prestige-panel" id="prestige-panel" style="display:none;">
                 <div style="font-weight: bold; font-size: 14px; margin-bottom: 5px; color: #ff9f43;">Milestone Shift</div>
                 <div style="font-size: 11px; color: #aaa; margin-bottom: 10px;">Reset your clicks, click level, sub-resources, upgrades and bonds to gain a permanent Milestone Point.</div>
-                <button class="upgrade-btn" id="mp-reset-btn" onclick="performMPReset()" style="width: 100%; background-color: #ff9f43; color: #000; font-weight: bold;">Reset for +1 MP<br><span style="font-size: 10px;" id="mp-req-display">(Requires 10.000Sp Clicks)</span></button>
+                <button class="upgrade-btn" id="mp-reset-btn" style="width: 100%; background-color: #ff9f43; color: #000; font-weight: bold;">Reset for +1 MP<br><span style="font-size: 10px;" id="mp-req-display">(Requires 10.000Sp Clicks)</span></button>
             </div>
 
             <div class="upgrades-grid" style="margin-top: 0; width: 100%;">
@@ -421,21 +421,21 @@
                         <div class="upgrade-title">Covalent Bonds</div>
                         <div class="upgrade-desc">Adds +0.005 directly to your base Click Level multiplier. (Effect boosted by Clicks at milestone 26)</div>
                     </div>
-                    <button class="upgrade-btn" id="bond-covalent" onclick="buyBond('covalent')">Synthesize (100 Molecules)</button>
+                    <button class="upgrade-btn" id="bond-covalent">Synthesize (100 Molecules)</button>
                 </div>
                 <div class="upgrade-card">
                     <div>
                         <div class="upgrade-title">Ionic Bonds</div>
                         <div class="upgrade-desc">Increases the output of all slog(CM) milestones by +5% per bond (boosted by QE).</div>
                     </div>
-                    <button class="upgrade-btn" id="bond-ionic" onclick="buyBond('ionic')">Synthesize (500 Molecules)</button>
+                    <button class="upgrade-btn" id="bond-ionic">Synthesize (500 Molecules)</button>
                 </div>
                 <div class="upgrade-card" style="grid-column: span 2;">
                     <div>
                         <div class="upgrade-title">Metallic Bonds</div>
                         <div class="upgrade-desc">Creates a multiplier based on sub-resources: (Atoms*Energy*Power*Matter) ^ (0.002 * Bonds).</div>
                     </div>
-                    <button class="upgrade-btn" id="bond-metallic" onclick="buyBond('metallic')">Synthesize (2,000 Molecules)</button>
+                    <button class="upgrade-btn" id="bond-metallic">Synthesize (2,000 Molecules)</button>
                 </div>
             </div>
 
@@ -466,17 +466,7 @@
         </div>
     </div>
 
-    <!-- TAB 4: QUANTUM ENERGY LAYER -->
-    <div id="tab-molecular" class="tab-content hidden"></div> <!-- Kept class signatures safe -->
-    <div id="tab-molecular" class="tab-content hidden"></div>
-
-    <!-- MOLECULAR SUB TAB (QE OVERVIEW) -->
-    <div id="tab-molecular-energy"></div>
-
-    <!-- NEW ACCESSIBLE MOLECULAR PRESTIGE TAB -->
-    <div id="tab-molecular" class="tab-content hidden"></div>
-
-    <!-- TAB 5: QUANTUM ENERGY MILESTONES (NEW TAB PANEL) -->
+    <!-- TAB 4: QUANTUM ENERGY MILESTONES (NEW TAB PANEL) -->
     <div id="tab-quantum-energy" class="tab-content hidden">
         <div class="milestones-wrapper">
             <div class="milestones-list" id="qe-milestones-container">
@@ -485,22 +475,32 @@
         </div>
     </div>
 
-    <!-- TAB 6: SETTINGS -->
+    <!-- TAB 5: SETTINGS -->
     <div id="tab-settings" class="tab-content hidden">
         <div class="settings-container">
             <h3>Save Management</h3>
             <p style="font-size: 12px; color: #aaa;">Game autosaves locally every 10 seconds (if your browser allows file-system access).</p>
             <textarea class="save-textarea" id="save-box" readonly onclick="this.select()"></textarea>
             <div>
-                <button class="settings-btn" onclick="exportSave()">Export Save</button>
-                <button class="settings-btn" onclick="importSave()">Import Save</button>
-                <button class="settings-btn" style="background:#e84118;" onclick="hardReset()">Hard Reset</button>
+                <button class="settings-btn" id="export-save-btn">Export Save</button>
+                <button class="settings-btn" id="import-save-btn">Import Save</button>
+                <button class="settings-btn" style="background:#e84118;" id="hard-reset-btn">Hard Reset</button>
             </div>
         </div>
     </div>
 
     <script>
-        // --- 1. HOISTED MATH AND FORMATTING FUNCTIONS FIRST ---
+        // --- 1. GLOBAL BASE SECURITY / VARIABLE HOISTING FIRST ---
+        let storageAvailable = false;
+        try {
+            localStorage.setItem('__storage_test', 'test');
+            localStorage.removeItem('__storage_test');
+            storageAvailable = true;
+        } catch (e) {
+            console.warn("Local storage sandbox fallback is active. Progress will save in-memory only.");
+        }
+
+        // --- 2. MATH & SYSTEM HELPER FUNCTIONS ---
         function format(num) {
             if (num === null || isNaN(num)) return "0";
             if (num < 1000) return num.toFixed(3).replace(/\.000$/, '');
@@ -526,7 +526,7 @@
             return 1 + slog(Math.log10(x));
         }
 
-        // --- 2. DYNAMIC PRESTIGE COST DECAY CALCULATIONS ---
+        // --- 3. DYNAMIC LEVEL REQ AND MULTIPLIER BOOSTERS ---
         function getMPCostMultiplierBase() {
             let base = 1.65;
             if (state.quantumEnergy >= 2500) base = 1.61;
@@ -540,18 +540,23 @@
             return 1e25 * Math.pow(getMPCostMultiplierBase(), state.milestonePoints);
         }
 
-        function updateClickLevel() {
-            while (state.clicks >= getLevelRequirement(state.clickLevel)) {
-                state.clickLevel++;
-            }
-        }
-
         function getLevelRequirement(lvl) {
             let req = 100 * Math.pow(3.2875, lvl) * (lvl + 1);
             if (state.clicks >= 5e17) {
                 req /= MILESTONES[35].calc(state.clicks);
             }
             return req;
+        }
+
+        function updateClickLevel() {
+            while (state.clicks >= getLevelRequirement(state.clickLevel)) {
+                state.clickLevel++;
+            }
+        }
+
+        function getQEBonus() {
+            if (state.milestonePoints < 3) return 1.0;
+            return 1 + Math.pow(logBase(state.quantumEnergy + 1, 10), 0.5);
         }
 
         function getClickLevelMult() {
@@ -586,36 +591,6 @@
             return mult;
         }
 
-        // --- 3. GAME STATE DEFINITION ---
-        const state = {
-            clicks: 0,
-            clickLevel: 0,
-            
-            atoms: 0,
-            energy: 0,
-            power: 0,
-            matter: 0,
-            molecules: 0,
-
-            milestonePoints: 0,
-            quantumEnergy: 0,
-
-            upgrades: {
-                surge: 0,
-                autoclick: 0,
-                level: 0,
-                catalyst: 0
-            },
-
-            bonds: {
-                covalent: 0,
-                ionic: 0,
-                metallic: 0
-            },
-
-            lastTick: Date.now()
-        };
-
         // --- 4. DATA ARRAYS INITIALIZATION ---
         const MILESTONES = [
             { req: 100, type: 'clicks', desc: 'Clicks boosts atom gain.', formulaText: 'log25(CM*25)', calc: (cm) => logBase(cm * 25, 25) },
@@ -632,10 +607,8 @@
             { req: 125e6, type: 'clicks', desc: 'Clicks boosts itself yet again.', formulaText: 'slog(CM)/1.25', calc: (cm) => {
                 let s = slog(cm) / 1.25;
                 let ionicStrength = 0.05;
-                // QE Milestone 14: Ionic Tuning
                 if (state.quantumEnergy >= 25e6) ionicStrength += QE_MILESTONES[13].calc();
                 if (state.bonds.ionic > 0) s *= (1 + state.bonds.ionic * ionicStrength);
-                // QE Milestone 27: Super slog catalyst
                 if (state.quantumEnergy >= 100e12) s *= QE_MILESTONES[26].calc();
                 return Math.max(1, s);
             } },
@@ -659,7 +632,7 @@
             { req: 8e10, type: 'clicks', desc: 'x1.5 Matter Gain.', formulaText: 'Static', calc: () => 1.5 },
             { req: 1.2e11, type: 'clicks', desc: 'Triple Energy Gain.', formulaText: 'Static', calc: () => 3.0 },
 
-            // NEW ERA MILESTONES
+            // NEW ERA MILESTONES (Bugs with <1 values fixed)
             { req: 2e11, type: 'clicks', desc: 'Clicks boosts Molecules gain.', formulaText: '1 + log15(CM/1e11)', calc: (cm) => 1 + logBase(cm / 1e11, 15) },
             { req: 5e11, type: 'clicks', desc: 'Clicks boosts Covalent Bonds effect.', formulaText: '1 + log100(CM/1e10)^0.5', calc: (cm) => 1 + Math.pow(logBase(cm / 1e10, 100), 0.5) },
             { req: 1e12, type: 'clicks', desc: 'Matter boosts Atoms, Energy and Power.', formulaText: 'log10(Matter+1)^1.5', calc: () => Math.max(1, Math.pow(logBase(state.matter + 1, 10), 1.5)) },
@@ -694,7 +667,6 @@
             { req: 2e28, reqMP: 28, type: 'clicks', desc: 'Matter boosts Molecules gain.', formulaText: '1 + log10(Matter+1)*0.50', calc: () => 1 + logBase(state.matter + 1, 10) * 0.50 }
         ];
 
-        // --- DEDICATED QUANTUM ENERGY (QE) MILESTONES ---
         const QE_MILESTONES = [
             /* 0 */ { req: 25, desc: "Feedback Loop I: Passive QE generation accelerates on itself.", formulaText: "+log10(QE+1)", calc: (qe) => logBase(qe + 1, 10) },
             /* 1 */ { req: 100, desc: "Energy Surge: Click gain is boosted based on your Quantum Energy volume.", formulaText: "1 + log10(QE+1)*0.15", calc: (qe) => 1 + logBase(qe + 1, 10) * 0.15 },
@@ -733,68 +705,7 @@
             /* 34 */ { req: 1e18, desc: "Omega Feedback: Raise passive QE generation to ^1.05 and multiply clicks.", formulaText: "QE Gen ^ 1.05 & Clicks x log2(QE+1)", calc: (qe) => logBase(qe + 1, 2) }
         ];
 
-        // --- 5. CLICK GENERATION & NO-DEBUFF EXCESS SOFTCAP ---
-        function getClicksPerClick() {
-            let mult = getClickLevelMult();
-
-            // Click-boosting main milestones
-            MILESTONES.forEach((m, idx) => {
-                const isLockedByMP = m.reqMP && state.milestonePoints < m.reqMP;
-                const unlocked = !isLockedByMP && (m.type === 'clicks' ? state.clicks >= m.req : state.clickLevel >= m.req);
-                if (unlocked) {
-                    if ([0, 1, 3, 5, 8, 10, 12, 14, 15, 16, 17, 19, 20, 22, 23, 24, 25, 26, 27, 28, 29, 30, 32, 35, 36, 37, 38, 39, 40, 41, 43, 44].includes(idx)) return;
-                    let val = m.calc(state.clicks, state.clickLevel);
-                    if (state.clicks >= 1e20 && idx < 38) val = Math.pow(val, 1.1);
-                    mult *= val;
-                }
-            });
-
-            // Metallic bonds
-            if (state.bonds.metallic > 0) {
-                const totalSubs = state.atoms * state.energy * state.power * state.matter;
-                let multiplier = 0.002;
-                if (state.quantumEnergy >= 5e9) multiplier *= QE_MILESTONES[18].calc(); // Metallic Synergy
-                mult *= Math.pow(Math.max(1, totalSubs), multiplier * state.bonds.metallic);
-            }
-
-            let surgePower = 1.34;
-            if (state.clicks >= 2e18) surgePower *= 1.10; 
-            mult *= Math.pow(surgePower, state.upgrades.surge);
-
-            // Milestone Points Bonuses
-            if (state.milestonePoints >= 1) mult *= 1.60;
-            if (state.milestonePoints >= 2) mult *= (1 + 0.25 * state.milestonePoints);
-            if (state.milestonePoints >= 35) {
-                const subProduct = state.atoms * state.energy * state.power * state.matter;
-                mult *= Math.pow(Math.max(1, subProduct), 0.005);
-            }
-
-            // --- QE MILESTONE STAT DIRECT MULTIPLIERS ON CLICKS ---
-            if (state.quantumEnergy >= 100) mult *= QE_MILESTONES[1].calc(state.quantumEnergy);
-            if (state.quantumEnergy >= 250e6) mult *= QE_MILESTONES[15].calc();
-            if (state.quantumEnergy >= 1e9) mult *= QE_MILESTONES[17].calc();
-            if (state.quantumEnergy >= 250e9) mult *= QE_MILESTONES[21].calc(state.quantumEnergy);
-            if (state.quantumEnergy >= 5e12) mult *= QE_MILESTONES[24].calc();
-            if (state.quantumEnergy >= 500e15) mult *= QE_MILESTONES[33].calc();
-            if (state.quantumEnergy >= 1e18) mult *= QE_MILESTONES[34].calc(state.quantumEnergy);
-
-            // QE Exponent tuning
-            if (state.quantumEnergy >= 25e15) mult = Math.pow(mult, QE_MILESTONES[31].calc());
-
-            // Excess Threshold Softcap
-            if (state.clicks >= 1e25 || state.milestonePoints > 0) {
-                const T = 1e18; // 1 Qi threshold
-                if (mult > T) {
-                    let exponent = 0.80;
-                    if (state.milestonePoints >= 50) exponent = 0.90;
-                    mult = T + Math.pow(mult - T, exponent);
-                }
-            }
-
-            return Math.max(1, mult);
-        }
-
-        // Sub-resource generators
+        // --- 5. PROGRESSIVE INCREMENTAL CALCULATIONS ---
         function getAtomsPerSecond() {
             if (state.clicks < 100) return 0;
             let gain = 1;
@@ -811,12 +722,10 @@
             if (state.milestonePoints >= 5) gain = Math.pow(gain, 1.10);
             if (state.milestonePoints >= 8) gain *= (1 + 0.02 * state.clickLevel);
 
-            // QE Milestones Atoms multipliers
             if (state.quantumEnergy >= 250) gain *= QE_MILESTONES[2].calc(state.quantumEnergy);
             if (state.quantumEnergy >= 500e9) gain *= QE_MILESTONES[22].calc(state.quantumEnergy);
             if (state.quantumEnergy >= 5e15) gain *= QE_MILESTONES[30].calc();
 
-            // Exponent tuning
             if (state.quantumEnergy >= 250000) gain = Math.pow(gain, QE_MILESTONES[8].calc());
             if (state.quantumEnergy >= 1e12) gain = Math.pow(gain, QE_MILESTONES[23].calc());
 
@@ -836,11 +745,8 @@
 
             gain *= getQEBonus();
             if (state.milestonePoints >= 8) gain *= (1 + 0.02 * state.clickLevel);
-            
-            // 42 MP Resource Mini-Milestone 1
             if (state.milestonePoints >= 42 && state.atoms >= 1e9) gain *= 1.25;
 
-            // QE Milestones Energy multipliers
             if (state.quantumEnergy >= 1000) gain *= QE_MILESTONES[3].calc(state.quantumEnergy);
             if (state.quantumEnergy >= 500e9) gain *= QE_MILESTONES[22].calc(state.quantumEnergy);
             if (state.quantumEnergy >= 5e15) gain *= QE_MILESTONES[30].calc();
@@ -860,11 +766,8 @@
 
             gain *= getQEBonus();
             if (state.milestonePoints >= 8) gain *= (1 + 0.02 * state.clickLevel);
-            
-            // 42 MP Resource Mini-Milestone 2
             if (state.milestonePoints >= 42 && state.energy >= 1e7) gain *= 1.25;
 
-            // QE Milestones Power multipliers
             if (state.quantumEnergy >= 25000) gain *= QE_MILESTONES[6].calc(state.quantumEnergy);
             if (state.quantumEnergy >= 500e9) gain *= QE_MILESTONES[22].calc(state.quantumEnergy);
             if (state.quantumEnergy >= 5e15) gain *= QE_MILESTONES[30].calc();
@@ -882,11 +785,8 @@
 
             gain *= getQEBonus();
             if (state.milestonePoints >= 8) gain *= (1 + 0.02 * state.clickLevel);
-            
-            // 42 MP Resource Mini-Milestone 3
             if (state.milestonePoints >= 42 && state.power >= 1e5) gain *= 1.25;
 
-            // QE Milestones Matter multipliers
             if (state.quantumEnergy >= 2.5e6) gain *= QE_MILESTONES[11].calc(state.quantumEnergy);
             if (state.quantumEnergy >= 500e9) gain *= QE_MILESTONES[22].calc(state.quantumEnergy);
             if (state.quantumEnergy >= 5e15) gain *= QE_MILESTONES[30].calc();
@@ -907,16 +807,12 @@
 
             gain *= getQEBonus();
             if (state.milestonePoints >= 8) gain *= (1 + 0.02 * state.clickLevel);
-            
-            // 42 MP Resource Mini-Milestone 4
             if (state.milestonePoints >= 42 && state.matter >= 1e3) gain *= 1.25;
 
-            // QE Milestones Molecules multipliers
             if (state.quantumEnergy >= 100e6) gain *= QE_MILESTONES[14].calc(state.quantumEnergy);
             if (state.quantumEnergy >= 500e9) gain *= QE_MILESTONES[22].calc(state.quantumEnergy);
             if (state.quantumEnergy >= 5e15) gain *= QE_MILESTONES[30].calc();
 
-            // Molecule exponents
             if (state.quantumEnergy >= 250e12) gain = Math.pow(gain, QE_MILESTONES[27].calc());
 
             gain *= Math.pow(1.5, state.upgrades.catalyst);
@@ -943,15 +839,7 @@
             return gain;
         }
 
-        // --- 6. SHOP & UPGRADES CORE ---
-        function getUpgradeCost(type) {
-            const lvl = state.upgrades[type];
-            if (type === 'surge') return { resource: 'atoms', amount: 10 * Math.pow(2.2, lvl) };
-            if (type === 'autoclick') return { resource: 'energy', amount: 50 * Math.pow(2.5, lvl) };
-            if (type === 'level') return { resource: 'power', amount: 10 * Math.pow(3.0, lvl) };
-            if (type === 'catalyst') return { resource: 'matter', amount: 10 * Math.pow(6.0, lvl) };
-        }
-
+        // --- 6. SHOP UPGRADES & BONDS SYNTHESIS ---
         function buyUpgrade(type) {
             const cost = getUpgradeCost(type);
             if (state[cost.resource] >= cost.amount) {
@@ -959,16 +847,6 @@
                 state.upgrades[type]++;
                 updateUI();
             }
-        }
-
-        function getBondCost(type) {
-            let lvl = state.bonds[type];
-            let costMult = state.milestonePoints >= 12 ? 0.90 : 1.0;
-            if (state.quantumEnergy >= 500e12) costMult *= QE_MILESTONES[28].calc(); // Bonds Catalyst
-
-            if (type === 'covalent') return 100 * Math.pow(4, lvl) * costMult;
-            if (type === 'ionic') return 500 * Math.pow(5, lvl) * costMult;
-            if (type === 'metallic') return 2000 * Math.pow(6, lvl) * costMult;
         }
 
         function buyBond(type) {
@@ -980,7 +858,7 @@
             }
         }
 
-        // --- 7. PRESTIGE AND LIFETIME SAVINGS ---
+        // --- 7. PRESTIGE: MILESTONE POINTS RESET ---
         function performMPReset() {
             const req = getMPRequirement();
             if (state.clicks >= req) {
@@ -1004,6 +882,7 @@
             }
         }
 
+        // --- 8. SAVE SYSTEM MIGRATORS ---
         function exportSave() {
             try {
                 const saveStr = btoa(JSON.stringify(state));
@@ -1018,10 +897,30 @@
             if (saveStr) {
                 try {
                     const parsed = JSON.parse(atob(saveStr));
-                    Object.assign(state, parsed);
-                    if (!state.bonds) state.bonds = { covalent: 0, ionic: 0, metallic: 0 };
-                    if (state.milestonePoints === undefined) state.milestonePoints = 0;
-                    if (state.quantumEnergy === undefined) state.quantumEnergy = 0;
+                    
+                    if (parsed.clicks !== undefined) state.clicks = parsed.clicks;
+                    if (parsed.clickLevel !== undefined) state.clickLevel = parsed.clickLevel;
+                    if (parsed.atoms !== undefined) state.atoms = parsed.atoms;
+                    if (parsed.energy !== undefined) state.energy = parsed.energy;
+                    if (parsed.power !== undefined) state.power = parsed.power;
+                    if (parsed.matter !== undefined) state.matter = parsed.matter;
+                    if (parsed.molecules !== undefined) state.molecules = parsed.molecules;
+
+                    if (parsed.milestonePoints !== undefined) state.milestonePoints = parsed.milestonePoints;
+                    if (parsed.quantumEnergy !== undefined) state.quantumEnergy = parsed.quantumEnergy;
+
+                    if (parsed.upgrades) {
+                        if (parsed.upgrades.surge !== undefined) state.upgrades.surge = parsed.upgrades.surge;
+                        if (parsed.upgrades.autoclick !== undefined) state.upgrades.autoclick = parsed.upgrades.autoclick;
+                        if (parsed.upgrades.level !== undefined) state.upgrades.level = parsed.upgrades.level;
+                        if (parsed.upgrades.catalyst !== undefined) state.upgrades.catalyst = parsed.upgrades.catalyst;
+                    }
+                    if (parsed.bonds) {
+                        if (parsed.bonds.covalent !== undefined) state.bonds.covalent = parsed.bonds.covalent;
+                        if (parsed.bonds.ionic !== undefined) state.bonds.ionic = parsed.bonds.ionic;
+                        if (parsed.bonds.metallic !== undefined) state.bonds.metallic = parsed.bonds.metallic;
+                    }
+
                     state.lastTick = Date.now();
                     updateUI();
                     alert("Save loaded successfully!");
@@ -1045,7 +944,7 @@
             try {
                 localStorage.setItem('quantum_molecule_save_v2', JSON.stringify(state));
             } catch (e) {
-                console.warn("Autosave blocked locally by browser security sandbox:", e);
+                console.warn("Autosave blocked locally by browser sandbox settings:", e);
             }
         }
 
@@ -1055,17 +954,36 @@
                 const saved = localStorage.getItem('quantum_molecule_save_v2');
                 if (saved) {
                     const parsed = JSON.parse(saved);
-                    Object.assign(state, parsed);
-                    if (!state.bonds) state.bonds = { covalent: 0, ionic: 0, metallic: 0 };
-                    if (state.milestonePoints === undefined) state.milestonePoints = 0;
-                    if (state.quantumEnergy === undefined) state.quantumEnergy = 0;
+                    
+                    if (parsed.clicks !== undefined) state.clicks = parsed.clicks;
+                    if (parsed.clickLevel !== undefined) state.clickLevel = parsed.clickLevel;
+                    if (parsed.atoms !== undefined) state.atoms = parsed.atoms;
+                    if (parsed.energy !== undefined) state.energy = parsed.energy;
+                    if (parsed.power !== undefined) state.power = parsed.power;
+                    if (parsed.matter !== undefined) state.matter = parsed.matter;
+                    if (parsed.molecules !== undefined) state.molecules = parsed.molecules;
+
+                    if (parsed.milestonePoints !== undefined) state.milestonePoints = parsed.milestonePoints;
+                    if (parsed.quantumEnergy !== undefined) state.quantumEnergy = parsed.quantumEnergy;
+
+                    if (parsed.upgrades) {
+                        if (parsed.upgrades.surge !== undefined) state.upgrades.surge = parsed.upgrades.surge;
+                        if (parsed.upgrades.autoclick !== undefined) state.upgrades.autoclick = parsed.upgrades.autoclick;
+                        if (parsed.upgrades.level !== undefined) state.upgrades.level = parsed.upgrades.level;
+                        if (parsed.upgrades.catalyst !== undefined) state.upgrades.catalyst = parsed.upgrades.catalyst;
+                    }
+                    if (parsed.bonds) {
+                        if (parsed.bonds.covalent !== undefined) state.bonds.covalent = parsed.bonds.covalent;
+                        if (parsed.bonds.ionic !== undefined) state.bonds.ionic = parsed.bonds.ionic;
+                        if (parsed.bonds.metallic !== undefined) state.bonds.metallic = parsed.bonds.metallic;
+                    }
                 }
             } catch (e) {
-                console.warn("Could not retrieve local storage on file:/// sandbox:", e);
+                console.warn("Could not retrieve local storage on file:/// protocol:", e);
             }
         }
 
-        // --- 8. TICK LOOPS & TAB CONTROL ---
+        // --- 9. GAME AND UI TICKS LOOP ---
         function gameLoop() {
             const now = Date.now();
             const dt = (now - state.lastTick) / 1000;
@@ -1073,7 +991,6 @@
 
             if (state.upgrades.autoclick > 0) {
                 let autoClicksPerSec = state.upgrades.autoclick * 2;
-                // QE Milestone 17: Time Resonance Autoclicking speed increases
                 if (state.quantumEnergy >= 500e6) {
                     autoClicksPerSec = state.upgrades.autoclick * 3;
                 }
@@ -1094,15 +1011,23 @@
             updateUI();
         }
 
-        function switchTab(tabId) {
+        // --- Robust Tab Switching Controller (No deprecated window.event) ---
+        function switchTab(tabId, activeBtn) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
 
-            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
-            event.target.classList.add('active');
+            const targetTab = document.getElementById('tab-' + tabId);
+            if (targetTab) targetTab.classList.remove('hidden');
+
+            if (activeBtn) {
+                activeBtn.classList.add('active');
+            } else {
+                const btn = document.querySelector('.tab-btn[data-tab="' + tabId + '"]');
+                if (btn) btn.classList.add('active');
+            }
         }
 
-        // --- 9. RENDER MILESTONES (STANDARD CONCATENATION FOR ZERO ENGINE PARSING ISSUES) ---
+        // --- 10. REAL-TIME RENDERING ENGINE ---
         function renderMilestones() {
             const container = document.getElementById('milestones-container');
             if (!container) return;
@@ -1111,16 +1036,16 @@
                 const isLockedByMP = m.reqMP && state.milestonePoints < m.reqMP;
                 const isUnlocked = !isLockedByMP && (m.type === 'clicks' ? state.clicks >= m.req : state.clickLevel >= m.req);
                 
-                let formattedReq = m.type === 'clicks' ? `${format(m.req)} Clicks` : `Click Level ${m.req}`;
+                let formattedReq = m.type === 'clicks' ? format(m.req) + ' Clicks' : 'Click Level ' + m.req;
                 if (isLockedByMP) {
-                    formattedReq = `Requires ${m.reqMP} MP`;
+                    formattedReq = 'Requires ' + m.reqMP + ' MP';
                 }
                 
                 let currentVal = "1.000";
                 if (isUnlocked) {
                     let val = m.calc(state.clicks, state.clickLevel);
                     if (state.clicks >= 1e20 && idx < 38) {
-                        val = Math.pow(val, 1.1); // Omega Point Boost
+                        val = Math.pow(val, 1.1); 
                     }
                     currentVal = typeof val === 'number' ? val.toFixed(3) : val;
                 }
@@ -1144,7 +1069,6 @@
             }).join('');
         }
 
-        // NEW QE MILESTONES RENDERING
         function renderQEMilestones() {
             const container = document.getElementById('qe-milestones-container');
             if (!container) return;
@@ -1179,7 +1103,7 @@
         function updateUI() {
             document.getElementById('clicks-display').innerText = format(state.clicks);
             document.getElementById('level-display').innerText = state.clickLevel;
-            document.getElementById('level-mult-display').innerText = `${getClickLevelMult().toFixed(3)}x`;
+            document.getElementById('level-mult-display').innerText = getClickLevelMult().toFixed(3) + 'x';
             document.getElementById('next-level-display').innerText = format(getLevelRequirement(state.clickLevel));
             document.getElementById('per-click-display').innerText = formatInt(getClicksPerClick());
 
@@ -1187,140 +1111,12 @@
             if (state.clicks >= 100) {
                 document.getElementById('res-atoms').style.display = 'block';
                 document.getElementById('val-atoms').innerText = format(state.atoms);
-                document.getElementById('cps-atoms').innerText = `+${format(getAtomsPerSecond())}/s`;
+                document.getElementById('cps-atoms').innerText = '+' + format(getAtomsPerSecond()) + '/s';
             }
             if (state.clicks >= 1000) {
                 document.getElementById('res-energy').style.display = 'block';
                 document.getElementById('val-energy').innerText = format(state.energy);
-                document.getElementById('cps-energy').innerText = `+${format(getEnergyPerSecond())}/s`;
+                document.getElementById('cps-energy').innerText = '+' + format(getEnergyPerSecond()) + '/s';
             }
             if (state.clicks >= 200000) {
                 document.getElementById('res-power').style.display = 'block';
-                document.getElementById('val-power').innerText = format(state.power);
-                document.getElementById('cps-power').innerText = `+${format(getPowerPerSecond())}/s`;
-            }
-            if (state.clicks >= 10e6) {
-                document.getElementById('res-matter').style.display = 'block';
-                document.getElementById('val-matter').innerText = format(state.matter);
-                document.getElementById('cps-matter').innerText = `+${format(getMatterPerSecond())}/s`;
-            }
-
-            // Unlocks Molecules Tab and display Badge based onClicks or Milestone points
-            if (state.clicks >= 6e9 || state.milestonePoints > 0) {
-                document.getElementById('res-molecules').style.display = 'block';
-                document.getElementById('val-molecules').innerText = format(state.molecules);
-                document.getElementById('cps-molecules').innerText = `+${format(getMoleculesPerSecond())}/s`;
-                document.getElementById('mol-tab-btn').style.display = 'block';
-            } else {
-                document.getElementById('res-molecules').style.display = 'none';
-                document.getElementById('mol-tab-btn').style.display = 'none';
-            }
-
-            // Unlocks Milestone Points Prestige Panel and Badge
-            if (state.clicks >= 1e25 || state.milestonePoints > 0) {
-                document.getElementById('prestige-panel').style.display = 'block';
-                document.getElementById('res-mp').style.display = 'block';
-                document.getElementById('val-mp').innerText = state.milestonePoints;
-
-                const mpReq = getMPRequirement();
-                const mpBtn = document.getElementById('mp-reset-btn');
-                document.getElementById('mp-req-display').innerText = `(Requires ${format(mpReq)} Clicks)`;
-                mpBtn.disabled = state.clicks < mpReq;
-            } else {
-                document.getElementById('prestige-panel').style.display = 'none';
-            }
-
-            // Unlocks Quantum Energy Badge and Tab based on Milestone Points
-            if (state.milestonePoints >= 3) {
-                document.getElementById('res-qe').style.display = 'block';
-                document.getElementById('val-qe').innerText = format(state.quantumEnergy);
-                document.getElementById('cps-qe').innerText = `+${format(getQEPerSecond())}/s`;
-                document.getElementById('qe-tab-btn').style.display = 'block';
-            } else {
-                document.getElementById('res-qe').style.display = 'none';
-                document.getElementById('qe-tab-btn').style.display = 'none';
-            }
-
-            // Upgrade Shop costs
-            const surgeCost = getUpgradeCost('surge');
-            const surgeBtn = document.getElementById('upg-surge');
-            surgeBtn.innerText = `Lvl ${state.upgrades.surge} (Cost: ${format(surgeCost.amount)} Atoms)`;
-            surgeBtn.disabled = state.atoms < surgeCost.amount;
-
-            const autoCost = getUpgradeCost('autoclick');
-            const autoBtn = document.getElementById('upg-autoclick');
-            autoBtn.innerText = `Lvl ${state.upgrades.autoclick} (Cost: ${format(autoCost.amount)} Energy)`;
-            autoBtn.disabled = state.energy < autoCost.amount;
-
-            const lvlCost = getUpgradeCost('level');
-            const lvlBtn = document.getElementById('upg-level');
-            lvlBtn.innerText = `Lvl ${state.upgrades.level} (Cost: ${format(lvlCost.amount)} Power)`;
-            lvlBtn.disabled = state.power < lvlCost.amount;
-
-            const catCost = getUpgradeCost('catalyst');
-            const catBtn = document.getElementById('upg-catalyst');
-            catBtn.innerText = `Lvl ${state.upgrades.catalyst} (Cost: ${format(catCost.amount)} Matter)`;
-            catBtn.disabled = state.matter < catCost.amount;
-
-            // Bonds Shop Costs
-            const covCost = getBondCost('covalent');
-            const covBtn = document.getElementById('bond-covalent');
-            covBtn.innerText = `Lvl ${state.bonds.covalent} (Cost: ${format(covCost)} Mol)`;
-            covBtn.disabled = state.molecules < covCost;
-
-            const ionCost = getBondCost('ionic');
-            const ionBtn = document.getElementById('bond-ionic');
-            ionBtn.innerText = `Lvl ${state.bonds.ionic} (Cost: ${format(ionCost)} Mol)`;
-            ionBtn.disabled = state.molecules < ionCost;
-
-            const metCost = getBondCost('metallic');
-            const metBtn = document.getElementById('bond-metallic');
-            metBtn.innerText = `Lvl ${state.bonds.metallic} (Cost: ${format(metCost)} Mol)`;
-            metBtn.disabled = state.molecules < metCost;
-
-            // MP Milestones highlighting
-            for (let i = 1; i <= 12; i++) {
-                const box = document.getElementById(`mp-m${i}`);
-                if (!box) continue;
-                const reqs = [1, 2, 3, 5, 8, 12, 16, 20, 28, 35, 42, 50];
-                if (state.milestonePoints >= reqs[i-1]) {
-                    box.className = 'mp-milestone-box unlocked';
-                } else {
-                    box.className = 'mp-milestone-box';
-                }
-            }
-
-            // Dynamic rendering of 42 MP sub-resource mini-milestone statuses
-            if (state.milestonePoints >= 42) {
-                document.getElementById('mini-m1').style.color = state.atoms >= 1e9 ? '#1dd1a1' : '#ff9f43';
-                document.getElementById('mini-m1').innerText = `Atoms >= 1B: +25% Energy Gain (${state.atoms >= 1e9 ? 'ACTIVE' : 'INACTIVE'})`;
-                
-                document.getElementById('mini-m2').style.color = state.energy >= 1e7 ? '#1dd1a1' : '#ff9f43';
-                document.getElementById('mini-m2').innerText = `Energy >= 10M: +25% Power Gain (${state.energy >= 1e7 ? 'ACTIVE' : 'INACTIVE'})`;
-                
-                document.getElementById('mini-m3').style.color = state.power >= 1e5 ? '#1dd1a1' : '#ff9f43';
-                document.getElementById('mini-m3').innerText = `Power >= 100k: +25% Matter Gain (${state.power >= 1e5 ? 'ACTIVE' : 'INACTIVE'})`;
-                
-                document.getElementById('mini-m4').style.color = state.matter >= 1e3 ? '#1dd1a1' : '#ff9f43';
-                document.getElementById('mini-m4').innerText = `Matter >= 1k: +25% Molecules Gain (${state.matter >= 1e3 ? 'ACTIVE' : 'INACTIVE'})`;
-            }
-
-            renderMilestones();
-            renderQEMilestones();
-        }
-
-        // --- BUTTON TRIGGER & REGISTERING ---
-        document.getElementById('main-click-btn').addEventListener('click', () => {
-            state.clicks += getClicksPerClick();
-            updateClickLevel();
-            updateUI();
-        });
-
-        // --- INITIALIZATION CORE BOOTSTRAP ---
-        loadGame();
-        updateUI();
-        setInterval(gameLoop, 50);
-        setInterval(saveGame, 10000);
-    </script>
-</body>
-</html>
