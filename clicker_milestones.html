@@ -1,0 +1,1144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quantum Formula Clicker: Molecular Era</title>
+    <style>
+        body {
+            background-color: #0d0d0d;
+            color: #f1f1f1;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            user-select: none;
+        }
+
+        .tabs-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .tab-btn {
+            background-color: transparent;
+            border: 1px solid #333;
+            color: #888;
+            padding: 8px 20px;
+            font-size: 13px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tab-btn:hover {
+            border-color: #555;
+            color: #ccc;
+        }
+
+        .tab-btn.active {
+            border-color: #f1f1f1;
+            color: #f1f1f1;
+            background-color: rgba(255,255,255,0.05);
+        }
+
+        /* Sub-resources badges */
+        .sub-resources-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: center;
+            margin-bottom: 20px;
+            font-size: 12px;
+            color: #888;
+        }
+
+        .sub-res-badge {
+            background: #161616;
+            padding: 4px 10px;
+            border-radius: 4px;
+            border: 1px solid #222;
+        }
+
+        .stat-line {
+            font-size: 15px;
+            margin: 6px 0;
+            color: #ccc;
+        }
+
+        .clicks-amount {
+            font-size: 18px;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        /* Clicking Button */
+        .click-button {
+            background-color: #444;
+            border: none;
+            color: #fff;
+            border-radius: 40px;
+            width: 240px;
+            height: 90px;
+            font-size: 20px;
+            cursor: pointer;
+            outline: none;
+            transition: transform 0.05s, background-color 0.2s;
+            margin: 20px auto;
+            display: block;
+            box-shadow: inset 0 2px 5px rgba(255,255,255,0.2), 0 5px 15px rgba(0,0,0,0.5);
+        }
+
+        .click-button:hover {
+            background-color: #525252;
+        }
+
+        .click-button:active {
+            transform: scale(0.96);
+        }
+
+        /* Milestone Reset inside Molecular Tab */
+        .prestige-panel {
+            background-color: #121212;
+            border: 1px solid #ff9f43;
+            border-radius: 8px;
+            padding: 15px;
+            width: 100%;
+            text-align: center;
+            margin-bottom: 20px;
+            box-sizing: border-box;
+        }
+
+        /* Modernized Milestone Cards Styles */
+        .milestones-wrapper {
+            max-width: 700px;
+            width: 100%;
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid #1a1a1a;
+            border-radius: 8px;
+            padding: 12px;
+            background: #090909;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
+        }
+
+        .milestones-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .milestone-item {
+            background: #111111;
+            border: 1px solid #222222;
+            border-radius: 6px;
+            padding: 12px 16px;
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .milestone-item.active {
+            border-color: #2e2e2e;
+            border-left: 4px solid #1dd1a1;
+            background: #141414;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        .milestone-item.locked {
+            opacity: 0.45;
+            border-style: dashed;
+        }
+
+        .milestone-header {
+            display: flex;
+            justify-content: space-between;
+            font-weight: bold;
+            color: #777;
+            font-size: 13.5px;
+        }
+
+        .milestone-item.active .milestone-header {
+            color: #f1f1f1;
+        }
+
+        .milestone-desc {
+            font-size: 12.5px;
+            color: #555;
+            line-height: 1.4;
+        }
+
+        .milestone-item.active .milestone-desc {
+            color: #aaaaaa;
+        }
+
+        .milestone-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11px;
+            color: #444;
+            border-top: 1px solid #1c1c1c;
+            padding-top: 6px;
+            margin-top: 2px;
+        }
+
+        .milestone-item.active .milestone-footer {
+            color: #888;
+            border-top-color: #222;
+        }
+
+        .formula-tag {
+            color: #4a90e2;
+        }
+
+        /* Upgrades Grid */
+        .upgrades-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            max-width: 650px;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        @media (min-width: 600px) {
+            .upgrades-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .upgrade-card {
+            background-color: #121212;
+            border: 1px solid #222;
+            border-radius: 8px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .upgrade-title {
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .upgrade-desc {
+            font-size: 11.5px;
+            color: #aaa;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+
+        .upgrade-btn {
+            background-color: #2a2a2a;
+            color: #fff;
+            border: none;
+            padding: 8px;
+            font-size: 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .upgrade-btn:hover:not(:disabled) {
+            background-color: #3a3a3a;
+        }
+
+        .upgrade-btn:disabled {
+            background-color: #151515;
+            color: #444;
+            cursor: not-allowed;
+        }
+
+        .settings-container {
+            max-width: 500px;
+            width: 100%;
+            background: #121212;
+            border: 1px solid #222;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .save-textarea {
+            width: 90%;
+            height: 80px;
+            background: #000;
+            color: #00ff00;
+            border: 1px solid #333;
+            font-family: monospace;
+            padding: 10px;
+            margin: 10px 0;
+            resize: none;
+            font-size: 11px;
+        }
+
+        .settings-btn {
+            background: #2a2a2a;
+            color: #fff;
+            border: 1px solid #444;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            margin: 5px;
+        }
+
+        .settings-btn:hover {
+            background: #3a3a3a;
+        }
+
+        .tab-content {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .tab-content.hidden {
+            display: none !important;
+        }
+
+        /* MP Milestones List styling */
+        .mp-milestone-box {
+            border-left: 3px solid #333;
+            padding-left: 10px;
+            margin: 10px 0;
+            text-align: left;
+            font-size: 12.5px;
+            color: #555;
+            transition: all 0.2s;
+        }
+        .mp-milestone-box.unlocked {
+            border-left-color: #ff9f43;
+            color: #ff9f43;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="tabs-container">
+        <button class="tab-btn active" onclick="switchTab('click-mastery')">Click Mastery</button>
+        <button class="tab-btn" onclick="switchTab('click-surge')">Click Surge Multiplier</button>
+        <button class="tab-btn" id="mol-tab-btn" onclick="switchTab('molecular')" style="display:none;">Molecular Engineering</button>
+        <button class="tab-btn" onclick="switchTab('settings')">Settings</button>
+    </div>
+
+    <!-- Sub-resources Badges -->
+    <div class="sub-resources-row" id="resources-row">
+        <div class="sub-res-badge" id="res-mp" style="display:none; border-color: #ff9f43; color: #ff9f43;">Milestone Points: <span id="val-mp">0</span></div>
+        <div class="sub-res-badge" id="res-qe" style="display:none; border-color: #1dd1a1; color: #1dd1a1;">Quantum Energy: <span id="val-qe">0</span> (<span id="cps-qe">+0/s</span>)</div>
+        <div class="sub-res-badge" id="res-atoms" style="display:none;">Atoms: <span id="val-atoms">0</span> (<span id="cps-atoms">+0/s</span>)</div>
+        <div class="sub-res-badge" id="res-energy" style="display:none;">Energy: <span id="val-energy">0</span> (<span id="cps-energy">+0/s</span>)</div>
+        <div class="sub-res-badge" id="res-power" style="display:none;">Power: <span id="val-power">0</span> (<span id="cps-power">+0/s</span>)</div>
+        <div class="sub-res-badge" id="res-matter" style="display:none;">Matter: <span id="val-matter">0</span> (<span id="cps-matter">+0/s</span>)</div>
+        <div class="sub-res-badge" id="res-molecules" style="display:none;">Molecules: <span id="val-molecules">0</span> (<span id="cps-molecules">+0/s</span>)</div>
+    </div>
+
+    <!-- Main Central Stats -->
+    <div class="stats-container">
+        <div class="stat-line">You have <span class="clicks-amount" id="clicks-display">0</span> Clicks. Click the button to earn clicks!</div>
+        <div class="stat-line">Your Click Level is <span id="level-display" style="color: #fff; font-weight: bold;">0</span>. This boosts clicks by <span id="level-mult-display">1.000x</span>. (Next Level: <span id="next-level-display">100</span> clicks)</div>
+        <div class="stat-line" style="color: #aaa;">You gain <span id="per-click-display" style="color: #fff; font-weight: bold;">1</span> clicks per click.</div>
+    </div>
+
+    <button class="click-button" id="main-click-btn">click!</button>
+
+    <!-- TAB 1: CLICK MASTERY -->
+    <div id="tab-click-mastery" class="tab-content">
+        <div class="milestones-wrapper">
+            <div class="milestones-list" id="milestones-container">
+                <!-- Injected dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 2: CLICK SURGE MULTIPLIER -->
+    <div id="tab-click-surge" class="tab-content hidden">
+        <div class="upgrades-grid">
+            <div class="upgrade-card">
+                <div>
+                    <div class="upgrade-title">Click Surge Upgrade</div>
+                    <div class="upgrade-desc">Multiplies Click gain by 1.34x per level.</div>
+                </div>
+                <button class="upgrade-btn" id="upg-surge" onclick="buyUpgrade('surge')">Buy (10 Atoms)</button>
+            </div>
+            <div class="upgrade-card">
+                <div>
+                    <div class="upgrade-title">Quantum Auto-Clicker</div>
+                    <div class="upgrade-desc">Clicks the button 2 times per second automatically per level.</div>
+                </div>
+                <button class="upgrade-btn" id="upg-autoclick" onclick="buyUpgrade('autoclick')">Buy (50 Energy)</button>
+            </div>
+            <div class="upgrade-card">
+                <div>
+                    <div class="upgrade-title">Sub-Atomic Overclocker</div>
+                    <div class="upgrade-desc">Increases base Click Level exponent by +0.005 per level.</div>
+                </div>
+                <button class="upgrade-btn" id="upg-level" onclick="buyUpgrade('level')">Buy (10 Power)</button>
+            </div>
+            <div class="upgrade-card">
+                <div>
+                    <div class="upgrade-title">Dimensional Catalyst</div>
+                    <div class="upgrade-desc">Multiplies ALL sub-resource gains by 1.5x per level. (Matter cost)</div>
+                </div>
+                <button class="upgrade-btn" id="upg-catalyst" onclick="buyUpgrade('catalyst')">Buy (10 Matter)</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 3: MOLECULAR ENGINEERING & PRESTIGE -->
+    <div id="tab-molecular" class="tab-content hidden">
+        <div style="display: flex; flex-direction: column; width: 100%; max-width: 650px; gap: 20px;">
+            
+            <!-- Relocated Milestone Reset Panel (Tab Specific) -->
+            <div class="prestige-panel" id="prestige-panel" style="display:none;">
+                <div style="font-weight: bold; font-size: 14px; margin-bottom: 5px; color: #ff9f43;">Milestone Shift</div>
+                <div style="font-size: 11px; color: #aaa; margin-bottom: 10px;">Reset your clicks, click level, sub-resources, upgrades and bonds to gain a permanent Milestone Point.</div>
+                <button class="upgrade-btn" id="mp-reset-btn" onclick="performMPReset()" style="width: 100%; background-color: #ff9f43; color: #000; font-weight: bold;">Reset for +1 MP<br><span style="font-size: 10px;" id="mp-req-display">(Requires 10.000Sp Clicks)</span></button>
+            </div>
+
+            <div class="upgrades-grid" style="margin-top: 0; width: 100%;">
+                <div class="upgrade-card">
+                    <div>
+                        <div class="upgrade-title">Covalent Bonds</div>
+                        <div class="upgrade-desc">Adds +0.005 directly to your base Click Level multiplier. (Effect boosted by Clicks at milestone 26)</div>
+                    </div>
+                    <button class="upgrade-btn" id="bond-covalent" onclick="buyBond('covalent')">Synthesize (100 Molecules)</button>
+                </div>
+                <div class="upgrade-card">
+                    <div>
+                        <div class="upgrade-title">Ionic Bonds</div>
+                        <div class="upgrade-desc">Increases the output of all slog(CM) milestones by +5% per bond.</div>
+                    </div>
+                    <button class="upgrade-btn" id="bond-ionic" onclick="buyBond('ionic')">Synthesize (500 Molecules)</button>
+                </div>
+                <div class="upgrade-card" style="grid-column: span 2;">
+                    <div>
+                        <div class="upgrade-title">Metallic Bonds</div>
+                        <div class="upgrade-desc">Creates a multiplier based on sub-resources: (Atoms*Energy*Power*Matter) ^ (0.002 * Bonds).</div>
+                    </div>
+                    <button class="upgrade-btn" id="bond-metallic" onclick="buyBond('metallic')">Synthesize (2,000 Molecules)</button>
+                </div>
+            </div>
+
+            <!-- Milestone Points Progression Section -->
+            <div style="background-color: #121212; border: 1px solid #222; border-radius: 8px; padding: 20px;">
+                <h3 style="color: #ff9f43; margin-top: 0; font-size: 16px;">Milestone Points (MP) Rewards</h3>
+                <div class="mp-milestone-box" id="mp-m1">[1 MP] Clicks are multiplied by 1.60x.</div>
+                <div class="mp-milestone-box" id="mp-m2">[2 MP] Clicks are boosted by +25% per owned MP.</div>
+                <div class="mp-milestone-box" id="mp-m3">[3 MP] Unlocks Quantum Energy passive generation (+1 QE/s).</div>
+                <div class="mp-milestone-box" id="mp-m4">[5 MP] Atoms gain is raised to the power of 1.10.</div>
+                <div class="mp-milestone-box" id="mp-m5">[8 MP] Click Level boosts all sub-resources by +2% per level.</div>
+                <div class="mp-milestone-box" id="mp-m6">[12 MP] Covalent, Ionic, and Metallic bond costs are reduced by 10%.</div>
+                <div class="mp-milestone-box" id="mp-m7">[16 MP] Unlocks 2 new high-tier click milestones (at 50Sp and 200Sp).</div>
+                <div class="mp-milestone-box" id="mp-m8">[20 MP] Quantum Energy passive gain is raised to the power of 1.15.</div>
+                <div class="mp-milestone-box" id="mp-m9">[28 MP] Unlocks 3 advanced click milestones (at 1Oc, 5Oc, and 20Oc).</div>
+                <div class="mp-milestone-box" id="mp-m10">[35 MP] All sub-resources together multiply click gain by (Atoms * Energy * Power * Matter) ^ 0.005.</div>
+                <div class="mp-milestone-box" id="mp-m11" style="height: auto;">
+                    [42 MP] Unlock Resource Mini-Milestones:
+                    <ul style="margin: 5px 0 0 15px; padding: 0; font-size: 11px; list-style-type: square;">
+                        <li id="mini-m1">Atoms >= 1B: +25% Energy Gain</li>
+                        <li id="mini-m2">Energy >= 10M: +25% Power Gain</li>
+                        <li id="mini-m3">Power >= 100k: +25% Matter Gain</li>
+                        <li id="mini-m4">Matter >= 1k: +25% Molecules Gain</li>
+                    </ul>
+                </div>
+                <div class="mp-milestone-box" id="mp-m12">[50 MP] Softcap penalty is heavily reduced (from exponent ^0.80 to ^0.90).</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 4: SETTINGS -->
+    <div id="tab-settings" class="tab-content hidden">
+        <div class="settings-container">
+            <h3>Save Management</h3>
+            <p style="font-size: 12px; color: #aaa;">Game autosaves locally every 10 seconds (if your browser allows file-system access).</p>
+            <textarea class="save-textarea" id="save-box" readonly onclick="this.select()"></textarea>
+            <div>
+                <button class="settings-btn" onclick="exportSave()">Export Save</button>
+                <button class="settings-btn" onclick="importSave()">Import Save</button>
+                <button class="settings-btn" style="background:#e84118;" onclick="hardReset()">Hard Reset</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. HOISTED MATH AND FORMATTING FUNCTIONS FIRST ---
+        function format(num) {
+            if (num === null || isNaN(num)) return "0";
+            if (num < 1000) return num.toFixed(3).replace(/\.000$/, '');
+            const suffixes = ["", "k", "M", "B", "T", "Qa", "Qi", "Sx", "Sp", "Oc", "No", "Dc"];
+            const i = Math.floor(Math.log10(num) / 3);
+            if (i >= suffixes.length) return num.toExponential(3);
+            return (num / Math.pow(10, i * 3)).toFixed(3) + suffixes[i];
+        }
+
+        function formatInt(num) {
+            return Math.floor(num).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+
+        function logBase(val, base) {
+            if (val <= 1) return 1.0;
+            const res = Math.log(val) / Math.log(base);
+            return isNaN(res) ? 1.0 : res;
+        }
+
+        function slog(x) {
+            if (x <= 0) return -1;
+            if (x <= 1) return x - 1;
+            return 1 + slog(Math.log10(x));
+        }
+
+        // --- 2. CLICK LEVEL CALCULATION HOISTING ---
+        function getLevelRequirement(lvl) {
+            let req = 100 * Math.pow(3.2875, lvl) * (lvl + 1);
+            if (state.clicks >= 5e17) {
+                req /= MILESTONES[35].calc(state.clicks);
+            }
+            return req;
+        }
+
+        function updateClickLevel() {
+            while (state.clicks >= getLevelRequirement(state.clickLevel)) {
+                state.clickLevel++;
+            }
+        }
+
+        function getClickLevelMult() {
+            let baseRate = state.clicks >= 3e8 ? 1.12 : 1.09;
+            
+            let covBonus = state.bonds.covalent * 0.005;
+            if (state.clicks >= 5e11) {
+                covBonus *= (MILESTONES[25].calc(state.clicks) - 1); // Extract raw log progress correctly
+            }
+            baseRate += covBonus;
+
+            if (state.clicks >= 1e13) baseRate += MILESTONES[28].calc();
+            if (state.clicks >= 1e19) baseRate += MILESTONES[37].calc();
+
+            let mult = Math.pow(baseRate + (state.upgrades.level * 0.005), state.clickLevel);
+
+            if (state.clicks >= 1e20) mult *= MILESTONES[38].calc();
+
+            return mult;
+        }
+
+        // --- 3. GAME STATE DEFINITION ---
+        const state = {
+            clicks: 0,
+            clickLevel: 0,
+            
+            atoms: 0,
+            energy: 0,
+            power: 0,
+            matter: 0,
+            molecules: 0,
+
+            milestonePoints: 0,
+            quantumEnergy: 0,
+
+            upgrades: {
+                surge: 0,
+                autoclick: 0,
+                level: 0,
+                catalyst: 0
+            },
+
+            bonds: {
+                covalent: 0,
+                ionic: 0,
+                metallic: 0
+            },
+
+            lastTick: Date.now()
+        };
+
+        // --- 4. DATA ARRAY INITIALIZATION ---
+        const MILESTONES = [
+            { req: 100, type: 'clicks', desc: 'Clicks boosts atom gain.', formulaText: 'log25(CM*25)', calc: (cm) => logBase(cm * 25, 25) },
+            { req: 1000, type: 'clicks', desc: 'Clicks boosts energy gain.', formulaText: 'log25(CM*5)', calc: (cm) => logBase(cm * 5, 25) },
+            { req: 3000, type: 'clicks', desc: 'Clicks boosts itself.', formulaText: 'log8(CM/40)', calc: (cm) => logBase(cm / 40, 8) },
+            { req: 10000, type: 'clicks', desc: 'Clicks boosts atom gain again.', formulaText: 'log47(CM)', calc: (cm) => logBase(cm, 47) },
+            { req: 5, type: 'level', desc: 'Click Level boosts clicks.', formulaText: 'Lvl/2', calc: (_, lvl) => lvl / 2 },
+            { req: 200000, type: 'clicks', desc: 'Clicks boosts Power.', formulaText: 'log333(CM/33)', calc: (cm) => logBase(cm / 33, 333) },
+            { req: 500000, type: 'clicks', desc: 'Clicks boosts itself again.', formulaText: 'log10(CM/4000), MAX 20x', calc: (cm) => Math.min(20, logBase(cm / 4000, 10)) },
+            { req: 2.5e6, type: 'clicks', desc: 'Clicks boosts itself again.', formulaText: 'log777(CM/7)', calc: (cm) => logBase(cm / 7, 777) },
+            { req: 10e6, type: 'clicks', desc: 'Clicks boosts Matter gain.', formulaText: 'log333(CM/3333)', calc: (cm) => logBase(cm / 3333, 333) },
+            { req: 25e6, type: 'clicks', desc: 'Clicks boosts itself yet again.', formulaText: 'log53(CM/53535)', calc: (cm) => logBase(cm / 53535, 53) },
+            { req: 50e6, type: 'clicks', desc: 'Clicks boosts Atoms, Energy and Power.', formulaText: 'log28(CM/288888)', calc: (cm) => logBase(cm / 288888, 28) },
+            { req: 125e6, type: 'clicks', desc: 'Clicks boosts itself yet again.', formulaText: 'slog(CM)/1.25', calc: (cm) => {
+                let s = slog(cm) / 1.25;
+                if (state.bonds.ionic > 0) s *= (1 + state.bonds.ionic * 0.05);
+                return Math.max(1, s);
+            } },
+            { req: 3e8, type: 'clicks', desc: 'Click level mult to clicks is increased from 1.09 to 1.12. It also boosts Atoms.', formulaText: 'Static', calc: () => 1.12 },
+            { req: 7.5e8, type: 'clicks', desc: 'Clicks boosts itself yet again.', formulaText: 'log1212(CM/1212)', calc: (cm) => logBase(cm / 1212, 1212) },
+            { req: 2e9, type: 'clicks', desc: 'Clicks boosts Matter gain again.', formulaText: 'log700K(CM*70)', calc: (cm) => logBase(cm * 70, 700000) },
+            { req: 3e9, type: 'clicks', desc: 'Clicks boosts Atom gain again.', formulaText: 'log22.5K(CM*225)', calc: (cm) => logBase(cm * 225, 22500) },
+            { req: 4e9, type: 'clicks', desc: 'Clicks boosts Power gain again.', formulaText: 'log88888(CM*888)', calc: (cm) => logBase(cm * 888, 88888) },
+            { req: 6e9, type: 'clicks', desc: 'Clicks boosts Molecules gain.', formulaText: 'log4K(CM/4K)', calc: (cm) => logBase(cm / 4000, 4000) },
+            { req: 1e10, type: 'clicks', desc: 'x1.75 Clicks Gain.', formulaText: 'Static', calc: () => 1.75 },
+            { req: 2e10, type: 'clicks', desc: 'Clicks boosts Energy and Matter gain.', formulaText: 'log5M(CM*500)', calc: (cm) => logBase(cm * 500, 5000000) },
+            { req: 3e10, type: 'clicks', desc: 'Triple Atom Gain.', formulaText: 'Static', calc: () => 3.0 },
+            { req: 5e10, type: 'clicks', desc: 'Clicks boosts itself.', formulaText: 'slog(CM)/1.7', calc: (cm) => {
+                let s = slog(cm) / 1.7;
+                if (state.bonds.ionic > 0) s *= (1 + state.bonds.ionic * 0.05);
+                return Math.max(1, s);
+            } },
+            { req: 8e10, type: 'clicks', desc: 'x1.5 Matter Gain.', formulaText: 'Static', calc: () => 1.5 },
+            { req: 1.2e11, type: 'clicks', desc: 'Triple Energy Gain.', formulaText: 'Static', calc: () => 3.0 },
+
+            // NEW ERA MILESTONES (Bugs with <1 values fixed)
+            { req: 2e11, type: 'clicks', desc: 'Clicks boosts Molecules gain.', formulaText: '1 + log15(CM/1e11)', calc: (cm) => 1 + logBase(cm / 1e11, 15) },
+            { req: 5e11, type: 'clicks', desc: 'Clicks boosts Covalent Bonds effect.', formulaText: '1 + log100(CM/1e10)^0.5', calc: (cm) => 1 + Math.pow(logBase(cm / 1e10, 100), 0.5) },
+            { req: 1e12, type: 'clicks', desc: 'Matter boosts Atoms, Energy and Power.', formulaText: 'log10(Matter+1)^1.5', calc: () => Math.max(1, Math.pow(logBase(state.matter + 1, 10), 1.5)) },
+            { req: 3e12, type: 'clicks', desc: 'Click Level boosts Molecules gain.', formulaText: '1 + Lvl/25', calc: () => 1 + state.clickLevel / 25 },
+            { req: 1e13, type: 'clicks', desc: 'Molecules boost Click Level base multiplier.', formulaText: '+log10(Mol+1)*0.002', calc: () => logBase(state.molecules + 1, 10) * 0.002 },
+            { req: 5e13, type: 'clicks', desc: 'Clicks boosts Ionic Bonds effectiveness.', formulaText: 'log250(CM/1e11)', calc: (cm) => logBase(cm / 1e11, 250) },
+            { req: 2e14, type: 'clicks', desc: 'Atoms boost Energy and Power production.', formulaText: 'log5(Atoms+1)^0.8', calc: () => Math.max(1, Math.pow(logBase(state.atoms + 1, 5), 0.8)) },
+            { req: 1e15, type: 'clicks', desc: 'Clicks boosts itself again.', formulaText: 'slog(CM)/1.1', calc: (cm) => {
+                let s = slog(cm) / 1.1;
+                if (state.bonds.ionic > 0) s *= (1 + state.bonds.ionic * 0.05);
+                return Math.max(1, s);
+            } },
+            { req: 5e15, type: 'clicks', desc: 'Matter boosts Molecules gain directly.', formulaText: 'log10(Matter+1)^1.2', calc: () => Math.max(1, Math.pow(logBase(state.matter + 1, 10), 1.2)) },
+            { req: 2e16, type: 'clicks', desc: 'Molecular Singularity: Molecules boost Clicks.', formulaText: 'log500(Mol+1)^2', calc: () => Math.max(1, Math.pow(logBase(state.molecules + 1, 500), 2)) },
+            { req: 1e17, type: 'clicks', desc: 'Global sub-resource multiplication boosts Click gain.', formulaText: 'log10(A*E*P*M+1)^0.5', calc: () => Math.max(1, Math.pow(logBase(state.atoms * state.energy * state.power * state.matter + 1, 10), 0.5)) },
+            { req: 5e17, type: 'clicks', desc: 'Click Level requirement divisor is increased.', formulaText: '1 + slog(CM)/2', calc: (cm) => 1 + slog(cm) / 2 },
+            { req: 2e18, type: 'clicks', desc: 'Quantum Entanglement: Click Surge upgrade is 10% stronger.', formulaText: 'Static', calc: () => 1.10 },
+            { req: 1e19, type: 'clicks', desc: 'Molecules boost Click Level Mult base further.', formulaText: '+log10(Mol+1)*0.005', calc: () => logBase(state.molecules + 1, 10) * 0.005 },
+            { req: 1e20, type: 'clicks', desc: 'Omega Point: Double base Level Mult, raise all previous milestone multipliers to ^1.1.', formulaText: 'Static', calc: () => 2.0 },
+            
+            // PRESTIGE SOFTCAP UNLOCKED AT 10Sp CLICKS
+            { req: 1e25, type: 'clicks', desc: 'Unlocks Milestone Reset. Applies a smooth Click Gain softcap of ^0.80 to clicks above 1Qi.', formulaText: '1Qi + (Excess)^0.80', calc: () => 1.0 },
+
+            // MP CONDITIONAL MILESTONES (16 MP and 28 MP Unlocks)
+            { req: 5e25, reqMP: 16, type: 'clicks', desc: 'Clicks boost Molecule gain.', formulaText: '1 + log20(CM/1e25)', calc: (cm) => 1 + logBase(cm / 1e25, 20) },
+            { req: 2e26, reqMP: 16, type: 'clicks', desc: 'Clicks boost Click Level Mult base.', formulaText: '+log1000(CM/1e25)*0.001', calc: (cm) => logBase(cm / 1e25, 1000) * 0.001 },
+            { req: 1e27, reqMP: 28, type: 'clicks', desc: 'Atoms boost click gain.', formulaText: '1 + log10(Atoms+1)*0.20', calc: () => 1 + logBase(state.atoms + 1, 10) * 0.20 },
+            { req: 5e27, reqMP: 28, type: 'clicks', desc: 'Energy boosts Click Level exponent.', formulaText: '+log10(Energy+1)*0.001', calc: () => logBase(state.energy + 1, 10) * 0.001 },
+            { req: 2e28, reqMP: 28, type: 'clicks', desc: 'Matter boosts Molecules gain.', formulaText: '1 + log10(Matter+1)*0.50', calc: () => 1 + logBase(state.matter + 1, 10) * 0.50 }
+        ];
+
+        // --- 5. DATA IN-MEMORY SAFETY CHECK ---
+        let storageAvailable = false;
+        try {
+            localStorage.setItem('__storage_test', 'test');
+            localStorage.removeItem('__storage_test');
+            storageAvailable = true;
+        } catch (e) {
+            console.warn("Local storage is not accessible due to Sandbox/file:/// security. Fallback in-memory active.");
+        }
+
+        // --- 6. FORMULAS AND GENERATION ---
+        function getQEBonus() {
+            if (state.milestonePoints < 3) return 1.0;
+            return 1 + Math.pow(logBase(state.quantumEnergy + 1, 10), 0.5);
+        }
+
+        function getClicksPerClick() {
+            let mult = getClickLevelMult();
+
+            // Multiply active click-boosting milestones
+            MILESTONES.forEach((m, idx) => {
+                const isLockedByMP = m.reqMP && state.milestonePoints < m.reqMP;
+                const unlocked = !isLockedByMP && (m.type === 'clicks' ? state.clicks >= m.req : state.clickLevel >= m.req);
+                if (unlocked) {
+                    if ([0, 1, 3, 5, 8, 10, 12, 14, 15, 16, 17, 19, 20, 22, 23, 24, 25, 26, 27, 28, 29, 30, 32, 35, 36, 37, 38, 39, 40, 41, 43, 44].includes(idx)) return;
+                    let val = m.calc(state.clicks, state.clickLevel);
+                    
+                    if (state.clicks >= 1e20 && idx < 38) val = Math.pow(val, 1.1);
+                    mult *= val;
+                }
+            });
+
+            if (state.bonds.metallic > 0) {
+                const totalSubs = state.atoms * state.energy * state.power * state.matter;
+                mult *= Math.pow(Math.max(1, totalSubs), 0.002 * state.bonds.metallic);
+            }
+
+            let surgePower = 1.34;
+            if (state.clicks >= 2e18) surgePower *= 1.10; 
+            mult *= Math.pow(surgePower, state.upgrades.surge);
+
+            // Milestone Points Bonuses
+            if (state.milestonePoints >= 1) mult *= 1.60;
+            if (state.milestonePoints >= 2) mult *= (1 + 0.25 * state.milestonePoints);
+            if (state.milestonePoints >= 35) {
+                const subProduct = state.atoms * state.energy * state.power * state.matter;
+                mult *= Math.pow(Math.max(1, subProduct), 0.005);
+            }
+
+            // Excess Threshold Softcap (Only clicks past 1 Qi are softcapped)
+            if (state.clicks >= 1e25 || state.milestonePoints > 0) {
+                const T = 1e18; // 1 Qi threshold
+                if (mult > T) {
+                    let exponent = 0.80;
+                    if (state.milestonePoints >= 50) exponent = 0.90;
+                    mult = T + Math.pow(mult - T, exponent);
+                }
+            }
+
+            return Math.max(1, mult);
+        }
+
+        function getAtomsPerSecond() {
+            if (state.clicks < 100) return 0;
+            let gain = 1;
+            gain *= MILESTONES[0].calc(state.clicks);
+            if (state.clicks >= 10000) gain *= MILESTONES[3].calc(state.clicks);
+            if (state.clicks >= 50e6) gain *= MILESTONES[10].calc(state.clicks);
+            if (state.clicks >= 3e8) gain *= 1.12;
+            if (state.clicks >= 3e9) gain *= MILESTONES[15].calc(state.clicks);
+            if (state.clicks >= 3e10) gain *= 3;
+            if (state.clicks >= 1e12) gain *= MILESTONES[26].calc();
+            if (state.clicks >= 2e14) gain *= MILESTONES[30].calc();
+
+            gain *= getQEBonus();
+            if (state.milestonePoints >= 5) gain = Math.pow(gain, 1.10);
+            if (state.milestonePoints >= 8) gain *= (1 + 0.02 * state.clickLevel);
+
+            gain *= Math.pow(1.5, state.upgrades.catalyst);
+            return gain;
+        }
+
+        function getEnergyPerSecond() {
+            if (state.clicks < 1000) return 0;
+            let gain = 1;
+            gain *= MILESTONES[1].calc(state.clicks);
+            if (state.clicks >= 50e6) gain *= MILESTONES[10].calc(state.clicks);
+            if (state.clicks >= 2e10) gain *= MILESTONES[19].calc(state.clicks);
+            if (state.clicks >= 1.2e11) gain *= 3;
+            if (state.clicks >= 1e12) gain *= MILESTONES[26].calc();
+            if (state.clicks >= 2e14) gain *= MILESTONES[30].calc();
+
+            gain *= getQEBonus();
+            if (state.milestonePoints >= 8) gain *= (1 + 0.02 * state.clickLevel);
+            
+            // 42 MP Resource Mini-Milestone 1
+            if (state.milestonePoints >= 42 && state.atoms >= 1e9) gain *= 1.25;
+
+            gain *= Math.pow(1.5, state.upgrades.catalyst);
+            return gain;
+        }
+
+        function getPowerPerSecond() {
+            if (state.clicks < 200000) return 0;
+            let gain = 1;
+            gain *= MILESTONES[5].calc(state.clicks);
+            if (state.clicks >= 50e6) gain *= MILESTONES[10].calc(state.clicks);
+            if (state.clicks >= 4e9) gain *= MILESTONES[16].calc(state.clicks);
+            if (state.clicks >= 1e12) gain *= MILESTONES[26].calc();
+            if (state.clicks >= 2e14) gain *= MILESTONES[30].calc();
+
+            gain *= getQEBonus();
+            if (state.milestonePoints >= 8) gain *= (1 + 0.02 * state.clickLevel);
+            
+            // 42 MP Resource Mini-Milestone 2
+            if (state.milestonePoints >= 42 && state.energy >= 1e7) gain *= 1.25;
+
+            gain *= Math.pow(1.5, state.upgrades.catalyst);
+            return gain;
+        }
+
+        function getMatterPerSecond() {
+            if (state.clicks < 10e6) return 0;
+            let gain = 1;
+            gain *= MILESTONES[8].calc(state.clicks);
+            if (state.clicks >= 2e9) gain *= MILESTONES[14].calc(state.clicks);
+            if (state.clicks >= 2e10) gain *= MILESTONES[19].calc(state.clicks);
+
+            gain *= getQEBonus();
+            if (state.milestonePoints >= 8) gain *= (1 + 0.02 * state.clickLevel);
+            
+            // 42 MP Resource Mini-Milestone 3
+            if (state.milestonePoints >= 42 && state.power >= 1e5) gain *= 1.25;
+
+            gain *= Math.pow(1.5, state.upgrades.catalyst);
+            return gain;
+        }
+
+        function getMoleculesPerSecond() {
+            if (state.clicks < 6e9) return 0;
+            let gain = 1;
+            gain *= MILESTONES[17].calc(state.clicks);
+            if (state.clicks >= 2e11) gain *= MILESTONES[24].calc(state.clicks);
+            if (state.clicks >= 3e12) gain *= MILESTONES[27].calc();
+            if (state.clicks >= 5e15) gain *= MILESTONES[32].calc();
+            if (state.clicks >= 5e25 && state.milestonePoints >= 16) gain *= MILESTONES[40].calc(state.clicks);
+            if (state.clicks >= 2e28 && state.milestonePoints >= 28) gain *= MILESTONES[44].calc();
+
+            gain *= getQEBonus();
+            if (state.milestonePoints >= 8) gain *= (1 + 0.02 * state.clickLevel);
+            
+            // 42 MP Resource Mini-Milestone 4
+            if (state.milestonePoints >= 42 && state.matter >= 1e3) gain *= 1.25;
+
+            gain *= Math.pow(1.5, state.upgrades.catalyst);
+            return gain;
+        }
+
+        function getQEPerSecond() {
+            if (state.milestonePoints < 3) return 0;
+            let gain = 1;
+            if (state.quantumEnergy >= 25) {
+                gain += Math.log10(state.quantumEnergy + 1);
+            }
+            if (state.milestonePoints >= 20) {
+                gain = Math.pow(gain, 1.15);
+            }
+            return gain;
+        }
+
+        // --- 7. SHOP & UPGRADES CORE ---
+        function getUpgradeCost(type) {
+            const lvl = state.upgrades[type];
+            if (type === 'surge') return { resource: 'atoms', amount: 10 * Math.pow(2.2, lvl) };
+            if (type === 'autoclick') return { resource: 'energy', amount: 50 * Math.pow(2.5, lvl) };
+            if (type === 'level') return { resource: 'power', amount: 10 * Math.pow(3.0, lvl) };
+            if (type === 'catalyst') return { resource: 'matter', amount: 10 * Math.pow(6.0, lvl) };
+        }
+
+        function buyUpgrade(type) {
+            const cost = getUpgradeCost(type);
+            if (state[cost.resource] >= cost.amount) {
+                state[cost.resource] -= cost.amount;
+                state.upgrades[type]++;
+                updateUI();
+            }
+        }
+
+        function getBondCost(type) {
+            let lvl = state.bonds[type];
+            let costMult = state.milestonePoints >= 12 ? 0.90 : 1.0;
+            if (type === 'covalent') return 100 * Math.pow(4, lvl) * costMult;
+            if (type === 'ionic') return 500 * Math.pow(5, lvl) * costMult;
+            if (type === 'metallic') return 2000 * Math.pow(6, lvl) * costMult;
+        }
+
+        function buyBond(type) {
+            const cost = getBondCost(type);
+            if (state.molecules >= cost) {
+                state.molecules -= cost;
+                state.bonds[type]++;
+                updateUI();
+            }
+        }
+
+        // --- 8. PRESTIGE AND LIFETIME SAVINGS ---
+        function getMPRequirement() {
+            return 1e25 * Math.pow(1.65, state.milestonePoints);
+        }
+
+        function performMPReset() {
+            const req = getMPRequirement();
+            if (state.clicks >= req) {
+                if (confirm("Resetting will convert your clicks into 1 Milestone Point. Are you ready to shift into a new era?")) {
+                    state.milestonePoints++;
+                    
+                    state.clicks = 0;
+                    state.clickLevel = 0;
+                    state.atoms = 0;
+                    state.energy = 0;
+                    state.power = 0;
+                    state.matter = 0;
+                    state.molecules = 0;
+
+                    state.upgrades = { surge: 0, autoclick: 0, level: 0, catalyst: 0 };
+                    state.bonds = { covalent: 0, ionic: 0, metallic: 0 };
+                    
+                    state.lastTick = Date.now();
+                    updateUI();
+                }
+            }
+        }
+
+        function exportSave() {
+            try {
+                const saveStr = btoa(JSON.stringify(state));
+                document.getElementById('save-box').value = saveStr;
+            } catch (e) {
+                alert("Failed to export save: " + e.message);
+            }
+        }
+
+        function importSave() {
+            const saveStr = prompt("Paste your Base64 save code:");
+            if (saveStr) {
+                try {
+                    const parsed = JSON.parse(atob(saveStr));
+                    Object.assign(state, parsed);
+                    if (!state.bonds) state.bonds = { covalent: 0, ionic: 0, metallic: 0 };
+                    if (state.milestonePoints === undefined) state.milestonePoints = 0;
+                    if (state.quantumEnergy === undefined) state.quantumEnergy = 0;
+                    state.lastTick = Date.now();
+                    updateUI();
+                    alert("Save loaded successfully!");
+                } catch(e) {
+                    alert("Invalid save code!");
+                }
+            }
+        }
+
+        function hardReset() {
+            if (confirm("Are you absolutely sure you want to reset all your progress? This cannot be undone.")) {
+                if (storageAvailable) {
+                    try { localStorage.removeItem('quantum_molecule_save_v2'); } catch (e) {}
+                }
+                location.reload();
+            }
+        }
+
+        function saveGame() {
+            if (!storageAvailable) return;
+            try {
+                localStorage.setItem('quantum_molecule_save_v2', JSON.stringify(state));
+            } catch (e) {
+                console.warn("Autosave blocked locally by browser security sandbox:", e);
+            }
+        }
+
+        function loadGame() {
+            if (!storageAvailable) return;
+            try {
+                const saved = localStorage.getItem('quantum_molecule_save_v2');
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    Object.assign(state, parsed);
+                    if (!state.bonds) state.bonds = { covalent: 0, ionic: 0, metallic: 0 };
+                    if (state.milestonePoints === undefined) state.milestonePoints = 0;
+                    if (state.quantumEnergy === undefined) state.quantumEnergy = 0;
+                }
+            } catch (e) {
+                console.warn("Could not retrieve local storage on file:/// sandbox:", e);
+            }
+        }
+
+        // --- 9. TICK LOOPS & TAB CONTROL ---
+        function gameLoop() {
+            const now = Date.now();
+            const dt = (now - state.lastTick) / 1000;
+            state.lastTick = now;
+
+            if (state.upgrades.autoclick > 0) {
+                const autoClicksPerSec = state.upgrades.autoclick * 2;
+                state.clicks += autoClicksPerSec * getClicksPerClick() * dt;
+            }
+
+            state.atoms += getAtomsPerSecond() * dt;
+            state.energy += getEnergyPerSecond() * dt;
+            state.power += getPowerPerSecond() * dt;
+            state.matter += getMatterPerSecond() * dt;
+            state.molecules += getMoleculesPerSecond() * dt;
+
+            if (state.milestonePoints >= 3) {
+                state.quantumEnergy += getQEPerSecond() * dt;
+            }
+
+            updateClickLevel();
+            updateUI();
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+            event.target.classList.add('active');
+        }
+
+        // --- 10. RE-WRITTEN VISUALLY POLISHED MILESTONES WITH STANDARD CONCATENATION ---
+        function renderMilestones() {
+            const container = document.getElementById('milestones-container');
+            if (!container) return;
+            
+            container.innerHTML = MILESTONES.map((m, idx) => {
+                const isLockedByMP = m.reqMP && state.milestonePoints < m.reqMP;
+                const isUnlocked = !isLockedByMP && (m.type === 'clicks' ? state.clicks >= m.req : state.clickLevel >= m.req);
+                
+                let formattedReq = m.type === 'clicks' ? `${format(m.req)} Clicks` : `Click Level ${m.req}`;
+                if (isLockedByMP) {
+                    formattedReq = `Requires ${m.reqMP} MP`;
+                }
+                
+                let currentVal = "1.000";
+                if (isUnlocked) {
+                    let val = m.calc(state.clicks, state.clickLevel);
+                    if (state.clicks >= 1e20 && idx < 38) {
+                        val = Math.pow(val, 1.1);
+                    }
+                    currentVal = typeof val === 'number' ? val.toFixed(3) : val;
+                }
+
+                // Explicit concatenation instead of nested template backticks to satisfy strict browser engines
+                const formulaTextSpan = isLockedByMP ? '' : 'Formula: <span class="formula-tag">' + m.formulaText + '</span>';
+                const boostTextSpan = isUnlocked ? 'Boost: ' + currentVal + 'x' : '';
+
+                return `
+                    <div class="milestone-item ${isUnlocked ? 'active' : ''} ${isLockedByMP ? 'locked' : ''}">
+                        <div class="milestone-header">
+                            <span>${formattedReq}</span>
+                            <span>${isUnlocked ? 'ACTIVE' : 'LOCKED'}</span>
+                        </div>
+                        <div class="milestone-desc">${isLockedByMP ? 'This milestone is hidden deep within molecular structures.' : m.desc}</div>
+                        <div class="milestone-footer">
+                            <span>${formulaTextSpan}</span>
+                            <span>${boostTextSpan}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function updateUI() {
+            document.getElementById('clicks-display').innerText = format(state.clicks);
+            document.getElementById('level-display').innerText = state.clickLevel;
+            document.getElementById('level-mult-display').innerText = `${getClickLevelMult().toFixed(3)}x`;
+            document.getElementById('next-level-display').innerText = format(getLevelRequirement(state.clickLevel));
+            document.getElementById('per-click-display').innerText = formatInt(getClicksPerClick());
+
+            // Render resources and badges
+            if (state.clicks >= 100) {
+                document.getElementById('res-atoms').style.display = 'block';
+                document.getElementById('val-atoms').innerText = format(state.atoms);
+                document.getElementById('cps-atoms').innerText = `+${format(getAtomsPerSecond())}/s`;
+            }
+            if (state.clicks >= 1000) {
+                document.getElementById('res-energy').style.display = 'block';
+                document.getElementById('val-energy').innerText = format(state.energy);
+                document.getElementById('cps-energy').innerText = `+${format(getEnergyPerSecond())}/s`;
+            }
+            if (state.clicks >= 200000) {
+                document.getElementById('res-power').style.display = 'block';
+                document.getElementById('val-power').innerText = format(state.power);
+                document.getElementById('cps-power').innerText = `+${format(getPowerPerSecond())}/s`;
+            }
+            if (state.clicks >= 10e6) {
+                document.getElementById('res-matter').style.display = 'block';
+                document.getElementById('val-matter').innerText = format(state.matter);
+                document.getElementById('cps-matter').innerText = `+${format(getMatterPerSecond())}/s`;
+            }
+            // Keeps the Molecules display and Molecular Engineering tab permanently unlocked if you have at least 1 MP
+            if (state.clicks >= 6e9 || state.milestonePoints > 0) {
+                document.getElementById('res-molecules').style.display = 'block';
+                document.getElementById('val-molecules').innerText = format(state.molecules);
+                document.getElementById('cps-molecules').innerText = `+${format(getMoleculesPerSecond())}/s`;
+                document.getElementById('mol-tab-btn').style.display = 'block';
+            } else {
+                document.getElementById('res-molecules').style.display = 'none';
+                document.getElementById('mol-tab-btn').style.display = 'none';
+            }
+
+            // Milestone Points and Quantum Energy display UI
+            if (state.clicks >= 1e25 || state.milestonePoints > 0) {
+                document.getElementById('prestige-panel').style.display = 'block';
+                document.getElementById('res-mp').style.display = 'block';
+                document.getElementById('val-mp').innerText = state.milestonePoints;
+
+                const mpReq = getMPRequirement();
+                const mpBtn = document.getElementById('mp-reset-btn');
+                document.getElementById('mp-req-display').innerText = `(Requires ${format(mpReq)} Clicks)`;
+                mpBtn.disabled = state.clicks < mpReq;
+            } else {
+                document.getElementById('prestige-panel').style.display = 'none';
+            }
+
+            if (state.milestonePoints >= 3) {
+                document.getElementById('res-qe').style.display = 'block';
+                document.getElementById('val-qe').innerText = format(state.quantumEnergy);
+                document.getElementById('cps-qe').innerText = `+${format(getQEPerSecond())}/s`;
+            }
+
+            // Upgrade Shop costs
+            const surgeCost = getUpgradeCost('surge');
+            const surgeBtn = document.getElementById('upg-surge');
+            surgeBtn.innerText = `Lvl ${state.upgrades.surge} (Cost: ${format(surgeCost.amount)} Atoms)`;
+            surgeBtn.disabled = state.atoms < surgeCost.amount;
+
+            const autoCost = getUpgradeCost('autoclick');
+            const autoBtn = document.getElementById('upg-autoclick');
+            autoBtn.innerText = `Lvl ${state.upgrades.autoclick} (Cost: ${format(autoCost.amount)} Energy)`;
+            autoBtn.disabled = state.energy < autoCost.amount;
+
+            const lvlCost = getUpgradeCost('level');
+            const lvlBtn = document.getElementById('upg-level');
+            lvlBtn.innerText = `Lvl ${state.upgrades.level} (Cost: ${format(lvlCost.amount)} Power)`;
+            lvlBtn.disabled = state.power < lvlCost.amount;
+
+            const catCost = getUpgradeCost('catalyst');
+            const catBtn = document.getElementById('upg-catalyst');
+            catBtn.innerText = `Lvl ${state.upgrades.catalyst} (Cost: ${format(catCost.amount)} Matter)`;
+            catBtn.disabled = state.matter < catCost.amount;
+
+            // Bonds Shop Costs
+            const covCost = getBondCost('covalent');
+            const covBtn = document.getElementById('bond-covalent');
+            covBtn.innerText = `Lvl ${state.bonds.covalent} (Cost: ${format(covCost)} Mol)`;
+            covBtn.disabled = state.molecules < covCost;
+
+            const ionCost = getBondCost('ionic');
+            const ionBtn = document.getElementById('bond-ionic');
+            ionBtn.innerText = `Lvl ${state.bonds.ionic} (Cost: ${format(ionCost)} Mol)`;
+            ionBtn.disabled = state.molecules < ionCost;
+
+            const metCost = getBondCost('metallic');
+            const metBtn = document.getElementById('bond-metallic');
+            metBtn.innerText = `Lvl ${state.bonds.metallic} (Cost: ${format(metCost)} Mol)`;
+            metBtn.disabled = state.molecules < metCost;
+
+            // MP Milestones highlighting
+            for (let i = 1; i <= 12; i++) {
+                const box = document.getElementById(`mp-m${i}`);
+                if (!box) continue;
+                const reqs = [1, 2, 3, 5, 8, 12, 16, 20, 28, 35, 42, 50];
+                if (state.milestonePoints >= reqs[i-1]) {
+                    box.className = 'mp-milestone-box unlocked';
+                } else {
+                    box.className = 'mp-milestone-box';
+                }
+            }
+
+            // Dynamic rendering of 42 MP sub-resource mini-milestone statuses
+            if (state.milestonePoints >= 42) {
+                document.getElementById('mini-m1').style.color = state.atoms >= 1e9 ? '#1dd1a1' : '#ff9f43';
+                document.getElementById('mini-m1').innerText = `Atoms >= 1B: +25% Energy Gain (${state.atoms >= 1e9 ? 'ACTIVE' : 'INACTIVE'})`;
+                
+                document.getElementById('mini-m2').style.color = state.energy >= 1e7 ? '#1dd1a1' : '#ff9f43';
+                document.getElementById('mini-m2').innerText = `Energy >= 10M: +25% Power Gain (${state.energy >= 1e7 ? 'ACTIVE' : 'INACTIVE'})`;
+                
+                document.getElementById('mini-m3').style.color = state.power >= 1e5 ? '#1dd1a1' : '#ff9f43';
+                document.getElementById('mini-m3').innerText = `Power >= 100k: +25% Matter Gain (${state.power >= 1e5 ? 'ACTIVE' : 'INACTIVE'})`;
+                
+                document.getElementById('mini-m4').style.color = state.matter >= 1e3 ? '#1dd1a1' : '#ff9f43';
+                document.getElementById('mini-m4').innerText = `Matter >= 1k: +25% Molecules Gain (${state.matter >= 1e3 ? 'ACTIVE' : 'INACTIVE'})`;
+            }
+
+            renderMilestones();
+        }
+
+        // --- BUTTON TRIGGER & REGISTERING ---
+        document.getElementById('main-click-btn').addEventListener('click', () => {
+            state.clicks += getClicksPerClick();
+            updateClickLevel();
+            updateUI();
+        });
+
+        // --- INITIALIZATION CORE BOOTSTRAP ---
+        loadGame();
+        updateUI();
+        setInterval(gameLoop, 50);
+        setInterval(saveGame, 10000);
+    </script>
+</body>
+</html>
