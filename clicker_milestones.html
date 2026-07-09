@@ -456,6 +456,14 @@
                 <button class="upgrade-btn" id="upg-catalyst" onclick="buyUpgrade('catalyst')">Buy (10 Matter)</button>
             </div>
         </div>
+
+        <!-- Dynamic Visual Cards container for Resource Mini-Milestones under Tab 2 (Click Surge) -->
+        <div id="surge-mini-milestones-wrapper" style="display: none; width: 100%; max-width: 700px; margin-top: 30px;">
+            <h3 style="color: #ff9f43; margin-top: 0; font-size: 15px; text-align: center;">Resource Mini-Milestones</h3>
+            <div class="milestones-list" id="mini-milestones-surge-container">
+                <!-- Injected dynamically -->
+            </div>
+        </div>
     </div>
 
     <!-- TAB 3: MOLECULAR ENGINEERING & PRESTIGE -->
@@ -509,16 +517,17 @@
                 <div class="mp-milestone-box" id="mp-m11">[28 MP] Unlocks 3 advanced click milestones (at 1Oc, 5Oc, and 20Oc).</div>
                 <div class="mp-milestone-box" id="mp-m12">[32 MP] Active Engine: Manual clicks and Virtual Enter are 5x more powerful.</div>
                 <div class="mp-milestone-box" id="mp-m13">[35 MP] All sub-resources together multiply click gain by (Atoms * Energy * Power * Matter) ^ 0.005.</div>
-                <div class="mp-milestone-box" id="mp-m14" style="height: auto;">
-                    [42 MP] Unlock Resource Mini-Milestones (2 Tiers per resource):
-                    <ul style="margin: 5px 0 0 15px; padding: 0; font-size: 11px; list-style-type: square;">
-                        <li id="mini-m1">Atoms: >=1B (x2 Energy Gain) | >=100B (x3.5 Energy Gain)</li>
-                        <li id="mini-m2">Energy: >=10M (x2 Power Gain) | >=1B (x3.5 Power Gain)</li>
-                        <li id="mini-m3">Power: >=100k (x2 Matter Gain) | >=10M (x3.5 Matter Gain)</li>
-                        <li id="mini-m4">Matter: >=1k (x2 Molecules Gain) | >=100k (x3.5 Molecules Gain)</li>
-                    </ul>
+                <div class="mp-milestone-box" id="mp-m14">[42 MP] Unlock Resource Mini-Milestones. Check detailed tiered progress panels below.</div>
+                <div class="mp-milestone-box" id="mp-m15">[46 MP] Quantum Idle: Clicks above 100DDc (1e38) multiply Energy Gain by 1 + log10(Clicks / 1e38) * 0.5 (currently: <span id="mp-m15-val">1.000</span>x).</div>
+                <div class="mp-milestone-box" id="mp-m16">[50 MP] Softcap penalty is heavily reduced (from exponent ^0.90 to ^0.95).</div>
+            </div>
+
+            <!-- Dynamic Visual Cards container for Resource Mini-Milestones under Tab 3 (Molecular) -->
+            <div id="molecular-mini-milestones-wrapper" style="display: none; width: 100%; max-width: 700px; margin-top: 10px;">
+                <h3 style="color: #ff9f43; margin-top: 0; font-size: 15px; text-align: center;">Resource Mini-Milestones</h3>
+                <div class="milestones-list" id="mini-milestones-molecular-container">
+                    <!-- Injected dynamically -->
                 </div>
-                <div class="mp-milestone-box" id="mp-m15">[50 MP] Softcap penalty is heavily reduced (from exponent ^0.90 to ^0.95).</div>
             </div>
         </div>
     </div>
@@ -565,7 +574,8 @@
         function format(num) {
             if (num === null || isNaN(num)) return "0";
             if (num < 1000) return num.toFixed(3).replace(/\.000$/, '');
-            const suffixes = ["", "k", "M", "B", "T", "Qa", "Qi", "Sx", "Sp", "Oc", "No", "Dc"];
+            // Extended short-scale suffixes to support decillions, vigintillions, and higher (up to 1e93)
+            const suffixes = ["", "k", "M", "B", "T", "Qa", "Qi", "Sx", "Sp", "Oc", "No", "Dc", "UDc", "DDc", "TDc", "QaDc", "QiDc", "SxDc", "SpDc", "OcDc", "NoDc", "Vg", "UVg", "DVg", "TVg", "QaVg", "QiVg", "SxVg", "SpVg", "OcVg", "NoVg", "Tg"];
             const i = Math.floor(Math.log10(num) / 3);
             if (i >= suffixes.length) return num.toExponential(3);
             return (num / Math.pow(10, i * 3)).toFixed(3) + suffixes[i];
@@ -673,7 +683,6 @@
         };
 
         // --- 4. DATA ARRAY INITIALIZATION ---
-        // Click requirements adjusted slightly down (40, 800, 2200, 7000) - Formulas unchanged
         const MILESTONES = [
             { req: 40, type: 'clicks', desc: 'Clicks boosts atom gain.', formulaText: 'log25(CM*25)', calc: (cm) => logBase(cm * 25, 25) },
             { req: 800, type: 'clicks', desc: 'Clicks boosts energy gain.', formulaText: 'log25(CM*5)', calc: (cm) => logBase(cm * 5, 25) },
@@ -748,7 +757,7 @@
             { req: 600, desc: 'Energy Synthesis: Energy gain is multiplied.', formulaText: '1 + log10(QE + 1)*0.2', calc: (qe) => 1 + logBase(qe + 1, 10) * 0.2 },
             { req: 1500, desc: 'Power Conversion: Power gain is multiplied.', formulaText: '1 + log10(QE + 1)*0.2', calc: (qe) => 1 + logBase(qe + 1, 10) * 0.2 },
             { req: 4000, desc: 'Matter Condensation: Matter gain is multiplied.', formulaText: '1 + log10(QE + 1)*0.2', calc: (qe) => 1 + logBase(qe + 1, 10) * 0.2 },
-            { req: 10000, desc: 'Milestone Stabilization: Reduces the Milestone Point price growth base rate.', formulaText: '1.65 - min(0.1, log10(QE)*0.005)', calc: (qe) => 1.65 - Math.min(0.1, logBase(qe, 10) * 0.005) },
+            { req: 10000, desc: 'Milestone Stabilization: Reduces the Milestone Point price growth base rate.', formulaText: '1.55 - min(0.1, log10(QE)*0.005)', calc: (qe) => 1.55 - Math.min(0.1, logBase(qe, 10) * 0.005) },
             { req: 25000, desc: 'Double Quantum: QE gain is multiplied.', formulaText: '2.00x', calc: () => 2.0 },
             { req: 75000, desc: 'Click Synergy: Clicks are boosted.', formulaText: 'slog(QE) * 1.2', calc: (qe) => slog(qe) * 1.2 },
             { req: 200000, desc: 'Molecular Bond Reinforcement: Ionic bonds are +0.5% more effective per level.', formulaText: 'Static (+0.005/ bond)', calc: () => 0.005 },
@@ -777,6 +786,55 @@
             { req: 3e14, desc: '25x Quantum: QE gain is multiplied.', formulaText: '25.00x', calc: () => 25.0 },
             { req: 8e14, desc: 'Quantum Singularity: Clicks are boosted.', formulaText: 'slog(QE)^2', calc: (qe) => Math.pow(slog(qe), 2) },
             { req: 2e15, desc: 'Quantum Mastery: All previous Quantum Energy milestone effects are 20% stronger.', formulaText: '1.20x strength', calc: () => 1.2 }
+        ];
+
+        // --- 4c. DYNAMIC DATA STRUCTURE FOR RESOURCE MINI-MILESTONES (NEW) ---
+        // Significantly balanced requirements to align with real prestige runs (e.g. 100M/100T)
+        const MINI_MILESTONES_DATA = [
+            {
+                id: 'atoms',
+                name: 'Atoms Mini-Milestone',
+                desc: 'Boosts Energy gain when Atom thresholds are reached.',
+                t1: 1e8,
+                t1Text: '100M Atoms',
+                t2: 1e14,
+                t2Text: '100T Atoms',
+                getVal: () => state.atoms,
+                getMult: () => getAtomsMiniMilestoneMult()
+            },
+            {
+                id: 'energy',
+                name: 'Energy Mini-Milestone',
+                desc: 'Boosts Power gain when Energy thresholds are reached.',
+                t1: 1e9,
+                t1Text: '1B Energy',
+                t2: 1e15,
+                t2Text: '1Qa Energy',
+                getVal: () => state.energy,
+                getMult: () => getEnergyMiniMilestoneMult()
+            },
+            {
+                id: 'power',
+                name: 'Power Mini-Milestone',
+                desc: 'Boosts Matter gain when Power thresholds are reached.',
+                t1: 1e7,
+                t1Text: '10M Power',
+                t2: 1e13,
+                t2Text: '10T Power',
+                getVal: () => state.power,
+                getMult: () => getPowerMiniMilestoneMult()
+            },
+            {
+                id: 'matter',
+                name: 'Matter Mini-Milestone',
+                desc: 'Boosts Molecules gain when Matter thresholds are reached.',
+                t1: 1e5,
+                t1Text: '100k Matter',
+                t2: 1e11,
+                t2Text: '100B Matter',
+                getVal: () => state.matter,
+                getMult: () => getMatterMiniMilestoneMult()
+            }
         ];
 
         // --- 5. DATA IN-MEMORY SAFETY CHECK ---
@@ -817,32 +875,40 @@
         }
 
         // --- 5c. RESOURCE MINI-MILESTONE HELPERS (42 MP) ---
+        // Balanced to include proper start-of-run thresholds & longer-term achievements
         function getAtomsMiniMilestoneMult() {
             if (state.milestonePoints < 42) return 1.0;
-            if (state.atoms >= 1e11) return 3.5;
-            if (state.atoms >= 1e9) return 2.0;
+            if (state.atoms >= 1e14) return 3.5;
+            if (state.atoms >= 1e8) return 2.0;
             return 1.0;
         }
 
         function getEnergyMiniMilestoneMult() {
             if (state.milestonePoints < 42) return 1.0;
-            if (state.energy >= 1e9) return 3.5;
-            if (state.energy >= 1e7) return 2.0;
+            if (state.energy >= 1e15) return 3.5;
+            if (state.energy >= 1e9) return 2.0;
             return 1.0;
         }
 
         function getPowerMiniMilestoneMult() {
             if (state.milestonePoints < 42) return 1.0;
-            if (state.power >= 1e7) return 3.5;
-            if (state.power >= 1e5) return 2.0;
+            if (state.power >= 1e13) return 3.5;
+            if (state.power >= 1e7) return 2.0;
             return 1.0;
         }
 
         function getMatterMiniMilestoneMult() {
             if (state.milestonePoints < 42) return 1.0;
-            if (state.matter >= 1e5) return 3.5;
-            if (state.matter >= 1e3) return 2.0;
+            if (state.matter >= 1e11) return 3.5;
+            if (state.matter >= 1e5) return 2.0;
             return 1.0;
+        }
+
+        // --- 5d. 46 MP QUANTUM IDLE BOOST HELPER ---
+        function get46MPBoost() {
+            if (state.milestonePoints < 46) return 1.0;
+            if (state.clicks <= 1e38) return 1.0;
+            return 1 + logBase(state.clicks / 1e38, 10) * 0.5;
         }
 
         // --- 6. FORMULAS AND GENERATION ---
@@ -912,7 +978,7 @@
             if (isQEMilestoneUnlocked(19)) mult *= getQEMilestoneEffect(19);
             if (isQEMilestoneUnlocked(33)) mult *= getQEMilestoneEffect(33);
 
-            // New 24 MP boost: 1.1^MP multiplier to Click Gain
+            // 24 MP boost: 1.1^MP multiplier to Click Gain
             if (state.milestonePoints >= 24) {
                 mult *= Math.pow(1.1, state.milestonePoints);
             }
@@ -934,10 +1000,10 @@
         }
 
         function getAtomsPerSecond() {
-            if (state.clicks < 40) return 0; // Adjusted from 100 to 40
+            if (state.clicks < 40) return 0; 
             let gain = 1;
             gain *= MILESTONES[0].calc(state.clicks);
-            if (state.clicks >= 7000) gain *= MILESTONES[3].calc(state.clicks); // Adjusted to 7000
+            if (state.clicks >= 7000) gain *= MILESTONES[3].calc(state.clicks); 
             if (state.clicks >= 50e6) gain *= MILESTONES[10].calc(state.clicks);
             if (state.clicks >= 3e8) gain *= 1.12;
             if (state.clicks >= 3e9) gain *= MILESTONES[15].calc(state.clicks);
@@ -959,7 +1025,7 @@
         }
 
         function getEnergyPerSecond() {
-            if (state.clicks < 800) return 0; // Adjusted from 1000 to 800
+            if (state.clicks < 800) return 0; 
             let gain = 1;
             gain *= MILESTONES[1].calc(state.clicks);
             if (state.clicks >= 50e6) gain *= MILESTONES[10].calc(state.clicks);
@@ -974,6 +1040,11 @@
             // 42 MP Resource Mini-Milestone 1 (Tiered: x2 or x3.5)
             gain *= getAtomsMiniMilestoneMult();
 
+            // 46 MP Quantum Idle Energy Boost
+            if (state.milestonePoints >= 46) {
+                gain *= get46MPBoost();
+            }
+
             // QE Milestones Energy multipliers
             if (isQEMilestoneUnlocked(3)) gain *= getQEMilestoneEffect(3);
             if (isQEMilestoneUnlocked(23)) gain *= getQEMilestoneEffect(23);
@@ -983,10 +1054,10 @@
             return gain;
         }
 
-        // --- CORE CLICK TRIGGER TRIGGER FUNCTION ---
+        // --- CORE CLICK TRIGGER FUNCTION ---
         function doClick() {
             let gain = getClicksPerClick();
-            // New 32 MP boost: Manual clicks (including Virtual Enter) are 5x stronger
+            // 32 MP boost: Manual clicks are 5x stronger
             if (state.milestonePoints >= 32) {
                 gain *= 5;
             }
@@ -1000,7 +1071,7 @@
         function startVirtualEnter() {
             if (virtualEnterInterval) return;
             doClick();
-            virtualEnterInterval = setInterval(doClick, 40); // 40ms mimics standard keyboard holding repeat
+            virtualEnterInterval = setInterval(doClick, 40); 
         }
         function stopVirtualEnter() {
             if (virtualEnterInterval) {
@@ -1108,7 +1179,7 @@
                 gain *= (1 + 0.50 * state.milestonePoints);
             }
 
-            // New 24 MP boost: 1.1^MP multiplier to Quantum Energy gain
+            // 24 MP boost: 1.1^MP multiplier to Quantum Energy gain
             if (state.milestonePoints >= 24) {
                 gain *= Math.pow(1.1, state.milestonePoints);
             }
@@ -1143,6 +1214,7 @@
             }
         }
 
+        // --- 8. PRESTIGE AND LIFETIME SAVINGS ---
         function getBondCost(type) {
             let lvl = state.bonds[type];
             let costMult = state.milestonePoints >= 12 ? 0.90 : 1.0;
@@ -1160,7 +1232,6 @@
             }
         }
 
-        // --- 8. PRESTIGE AND LIFETIME SAVINGS ---
         function getMPRequirement() {
             try {
                 let base = 1.55;
@@ -1227,9 +1298,9 @@
                     if (state.virtualEnter === undefined) state.virtualEnter = false;
                     state.lastTick = Date.now();
                     updateUI();
-                    alert("Save loaded successfully from the text box!");
+                    alert("Save loaded successfully!");
                 } catch(e) {
-                    alert("Invalid save code in the text box!");
+                    alert("Invalid save code!");
                 }
             } else {
                 alert("Please paste your save code into the text box first!");
@@ -1441,6 +1512,66 @@
             }).join('');
         }
 
+        // --- 10c. RENDER DYNAMIC MINI-MILESTONES IN CORE THEME CARD FORMAT ---
+        // Generates beautiful stylized cards exactly like other main milestones!
+        function renderMiniMilestonesContainers() {
+            const unlocked = state.milestonePoints >= 42;
+            const containers = [
+                document.getElementById('mini-milestones-molecular-container'),
+                document.getElementById('mini-milestones-surge-container')
+            ];
+
+            containers.forEach(container => {
+                if (!container) return;
+                if (!unlocked) {
+                    container.innerHTML = `
+                        <div class="milestone-item locked" style="opacity: 0.55; text-align: center; border-style: dashed; padding: 25px;">
+                            <div class="milestone-header" style="justify-content: center; font-weight: bold;">
+                                <span>LOCKED (Requires 42 MP)</span>
+                            </div>
+                            <div class="milestone-desc" style="margin: 10px 0; color: #777;">
+                                Reach 42 Milestone Points to unlock advanced tiered sub-resource multipliers.
+                            </div>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = MINI_MILESTONES_DATA.map(m => {
+                    const val = m.getVal();
+                    const mult = m.getMult();
+                    
+                    const isT1 = val >= m.t1;
+                    const isT2 = val >= m.t2;
+                    const isAny = isT1 || isT2;
+
+                    let tierStatus = "LOCKED";
+                    if (isT2) tierStatus = "TIER 2 ACTIVE";
+                    else if (isT1) tierStatus = "TIER 1 ACTIVE";
+
+                    const classActive = isAny ? 'active' : '';
+
+                    return `
+                        <div class="milestone-item ${classActive}">
+                            <div class="milestone-header">
+                                <span>${m.name}</span>
+                                <span style="font-weight: bold; color: ${isAny ? '#1dd1a1' : '#777'}">${tierStatus}</span>
+                            </div>
+                            <div class="milestone-desc" style="line-height: 1.5;">
+                                ${m.desc}<br>
+                                <span style="font-size: 11.5px; color: ${isT1 ? '#1dd1a1' : '#555'}; font-weight: ${isT1 ? 'bold' : 'normal'}">Tier 1: >= ${m.t1Text} (x2.00)</span> | 
+                                <span style="font-size: 11.5px; color: ${isT2 ? '#1dd1a1' : '#555'}; font-weight: ${isT2 ? 'bold' : 'normal'}">Tier 2: >= ${m.t2Text} (x3.50)</span>
+                            </div>
+                            <div class="milestone-footer">
+                                <span>Current: <span class="formula-tag">${format(val)}</span></span>
+                                <span>Boost: ${mult.toFixed(2)}x</span>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            });
+        }
+
         function updateUI() {
             document.getElementById('clicks-display').innerText = format(state.clicks);
             document.getElementById('level-display').innerText = state.clickLevel;
@@ -1459,12 +1590,12 @@
             }
 
             // Render resources and badges
-            if (state.clicks >= 40) { // Adjusted from 100 to 40
+            if (state.clicks >= 40) { 
                 document.getElementById('res-atoms').style.display = 'block';
                 document.getElementById('val-atoms').innerText = format(state.atoms);
                 document.getElementById('cps-atoms').innerText = `+${format(getAtomsPerSecond())}/s`;
             }
-            if (state.clicks >= 800) { // Adjusted from 1000 to 800
+            if (state.clicks >= 800) { 
                 document.getElementById('res-energy').style.display = 'block';
                 document.getElementById('val-energy').innerText = format(state.energy);
                 document.getElementById('cps-energy').innerText = `+${format(getEnergyPerSecond())}/s`;
@@ -1553,11 +1684,11 @@
             // Restore the static inner text for the virtual enter button
             if (veBtn) veBtn.innerText = "VIRTUAL ENTER";
 
-            // MP Milestones highlighting (Now checking all 15 milestones)
-            for (let i = 1; i <= 15; i++) {
+            // MP Milestones highlighting (Now checking all 16 milestones)
+            for (let i = 1; i <= 16; i++) {
                 const box = document.getElementById(`mp-m${i}`);
                 if (!box) continue;
-                const reqs = [1, 2, 3, 5, 6, 8, 12, 16, 20, 24, 28, 32, 35, 42, 50];
+                const reqs = [1, 2, 3, 5, 6, 8, 12, 16, 20, 24, 28, 32, 35, 42, 46, 50];
                 if (state.milestonePoints >= reqs[i-1]) {
                     box.className = 'mp-milestone-box unlocked';
                 } else {
@@ -1571,40 +1702,26 @@
                 mp24valSpan.innerText = format(Math.pow(1.1, state.milestonePoints));
             }
 
-            // Dynamic rendering of 42 MP tiered sub-resource mini-milestone statuses
-            if (state.milestonePoints >= 42) {
-                // Atoms
-                let atomsMult = getAtomsMiniMilestoneMult();
-                let atomsStatus = "INACTIVE";
-                if (atomsMult === 2.0) atomsStatus = "ACTIVE (Tier 1: x2)";
-                else if (atomsMult === 3.5) atomsStatus = "ACTIVE (Tier 2: x3.5)";
-                document.getElementById('mini-m1').style.color = atomsMult > 1.0 ? '#1dd1a1' : '#ff9f43';
-                document.getElementById('mini-m1').innerText = `Atoms: >=1B (x2 Energy Gain) | >=100B (x3.5 Energy Gain) [${atomsStatus}]`;
-                
-                // Energy
-                let energyMult = getEnergyMiniMilestoneMult();
-                let energyStatus = "INACTIVE";
-                if (energyMult === 2.0) energyStatus = "ACTIVE (Tier 1: x2)";
-                else if (energyMult === 3.5) energyStatus = "ACTIVE (Tier 2: x3.5)";
-                document.getElementById('mini-m2').style.color = energyMult > 1.0 ? '#1dd1a1' : '#ff9f43';
-                document.getElementById('mini-m2').innerText = `Energy: >=10M (x2 Power Gain) | >=1B (x3.5 Power Gain) [${energyStatus}]`;
-
-                // Power
-                let powerMult = getPowerMiniMilestoneMult();
-                let powerStatus = "INACTIVE";
-                if (powerMult === 2.0) powerStatus = "ACTIVE (Tier 1: x2)";
-                else if (powerMult === 3.5) powerStatus = "ACTIVE (Tier 2: x3.5)";
-                document.getElementById('mini-m3').style.color = powerMult > 1.0 ? '#1dd1a1' : '#ff9f43';
-                document.getElementById('mini-m3').innerText = `Power: >=100k (x2 Matter Gain) | >=10M (x3.5 Matter Gain) [${powerStatus}]`;
-
-                // Matter
-                let matterMult = getMatterMiniMilestoneMult();
-                let matterStatus = "INACTIVE";
-                if (matterMult === 2.0) matterStatus = "ACTIVE (Tier 1: x2)";
-                else if (matterMult === 3.5) matterStatus = "ACTIVE (Tier 2: x3.5)";
-                document.getElementById('mini-m4').style.color = matterMult > 1.0 ? '#1dd1a1' : '#ff9f43';
-                document.getElementById('mini-m4').innerText = `Matter: >=1k (x2 Molecules Gain) | >=100k (x3.5 Molecules Gain) [${matterStatus}]`;
+            // Update dynamic visual text for 46 MP Milestone if active
+            const mp46valSpan = document.getElementById('mp-m15-val');
+            if (mp46valSpan) {
+                mp46valSpan.innerText = format(get46MPBoost());
             }
+
+            // Show or hide Resource Mini-Milestones panel inside Click Surge tab
+            const surgeMM = document.getElementById('surge-mini-milestones-wrapper');
+            if (surgeMM) {
+                surgeMM.style.display = state.milestonePoints >= 42 ? 'block' : 'none';
+            }
+
+            // Show or hide Resource Mini-Milestones panel inside Molecular tab
+            const molMM = document.getElementById('molecular-mini-milestones-wrapper');
+            if (molMM) {
+                molMM.style.display = 'block'; // Render the card grid permanently or conditionally
+            }
+
+            // Dynamic rendering of unified card mini-milestone systems
+            renderMiniMilestonesContainers();
 
             renderMilestones();
             renderQEMilestones();
