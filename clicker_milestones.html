@@ -846,7 +846,7 @@
         }
 
         function getAtomsPerSecond() {
-            if (state.clicks < 100) return 0;
+            if (state.clicks < 40) return 0;
             let gain = 1;
             gain *= MILESTONES[0].calc(state.clicks);
             if (state.clicks >= 10000) gain *= MILESTONES[3].calc(state.clicks);
@@ -1324,7 +1324,7 @@ function performMPReset() {
             document.getElementById('per-click-display').innerText = format(getClicksPerClick());
 
             // Render resources and badges
-            if (state.clicks >= 100) {
+            if (state.clicks >= 40) {
                 document.getElementById('res-atoms').style.display = 'block';
                 document.getElementById('val-atoms').innerText = format(state.atoms);
                 document.getElementById('cps-atoms').innerText = `+${format(getAtomsPerSecond())}/s`;
