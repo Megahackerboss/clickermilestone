@@ -78,6 +78,16 @@
             color: #fff;
         }
 
+        /* Container for click buttons */
+        .click-container {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            align-items: center;
+            margin: 20px auto;
+            flex-wrap: wrap;
+        }
+
         /* Clicking Button */
         .click-button {
             background-color: #444;
@@ -90,8 +100,6 @@
             cursor: pointer;
             outline: none;
             transition: transform 0.05s, background-color 0.2s;
-            margin: 20px auto;
-            display: block;
             box-shadow: inset 0 2px 5px rgba(255,255,255,0.2), 0 5px 15px rgba(0,0,0,0.5);
         }
 
@@ -101,6 +109,27 @@
 
         .click-button:active {
             transform: scale(0.96);
+        }
+
+        /* Virtual Enter Button styling */
+        .virtual-enter-button {
+            background-color: #ff9f43;
+            border: none;
+            color: #000;
+            border-radius: 40px;
+            width: 180px;
+            height: 90px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            outline: none;
+            transition: transform 0.05s, background-color 0.2s;
+            box-shadow: inset 0 2px 5px rgba(255,255,255,0.4), 0 5px 15px rgba(0,0,0,0.5);
+        }
+
+        .virtual-enter-button:active {
+            transform: scale(0.96);
+            background-color: #e68a2e;
         }
 
         /* Milestone Reset inside Molecular Tab */
@@ -323,26 +352,28 @@
             border-left-color: #ff9f43;
             color: #ff9f43;
         }
-		.prestige-btn {
-    width: 100%;
-    background-color: #ff9f43 !important;
-    color: #000 !important;
-    font-weight: bold;
-    border: none;
-    padding: 8px;
-    font-size: 12px;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background 0.2s;
-}
-.prestige-btn:hover:not(:disabled) {
-    background-color: #ffb063 !important;
-}
-.prestige-btn:disabled {
-    background-color: #151515 !important;
-    color: #444 !important;
-    cursor: not-allowed;
-}
+
+        /* Specific prestige-btn responsive styles to avoid inline overrides */
+        .prestige-btn {
+            width: 100%;
+            background-color: #ff9f43 !important;
+            color: #000 !important;
+            font-weight: bold;
+            border: none;
+            padding: 8px;
+            font-size: 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .prestige-btn:hover:not(:disabled) {
+            background-color: #ffb063 !important;
+        }
+        .prestige-btn:disabled {
+            background-color: #151515 !important;
+            color: #444 !important;
+            cursor: not-allowed;
+        }
     </style>
 </head>
 <body>
@@ -373,7 +404,16 @@
         <div class="stat-line" style="color: #aaa;">You gain <span id="per-click-display" style="color: #fff; font-weight: bold;">1</span> clicks per click.</div>
     </div>
 
-    <button class="click-button" id="main-click-btn">click!</button>
+    <div class="click-container">
+        <button class="click-button" id="main-click-btn">click!</button>
+        <button class="virtual-enter-button" id="virtual-enter-btn" style="display: none;" 
+                onmousedown="startVirtualEnter()" 
+                onmouseup="stopVirtualEnter()" 
+                onmouseleave="stopVirtualEnter()" 
+                ontouchstart="event.preventDefault(); startVirtualEnter()" 
+                ontouchend="event.preventDefault(); stopVirtualEnter()"
+                ontouchcancel="event.preventDefault(); stopVirtualEnter()">VIRTUAL ENTER</button>
+    </div>
 
     <!-- TAB 1: CLICK MASTERY -->
     <div id="tab-click-mastery" class="tab-content">
@@ -506,6 +546,15 @@
                 <br>
                 <button class="settings-btn" style="background:#e84118;" onclick="hardReset()">Hard Reset</button>
             </div>
+            
+            <hr style="border: 0; border-top: 1px solid #222; margin: 20px 0;">
+            <h3>Mobile & Controls</h3>
+            <div style="display: flex; justify-content: center; margin-top: 10px;">
+                <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 13px;">
+                    <input type="checkbox" id="toggle-virtual-enter" onchange="toggleVirtualEnter(this.checked)">
+                    Enable Virtual Enter Button (Hold to rapidly click)
+                </label>
+            </div>
         </div>
     </div>
 
@@ -521,6 +570,7 @@
         }
 
         function formatInt(num) {
+            if (num >= 1000) return format(num);
             return Math.floor(num).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         }
 
@@ -616,10 +666,12 @@
                 metallic: 0
             },
 
+            virtualEnter: false, // Mobile Enter Click setting
             lastTick: Date.now()
         };
 
         // --- 4. DATA ARRAY INITIALIZATION ---
+        // Click requirements adjusted slightly down (40, 800, 2200, 7000) - Formulas unchanged
         const MILESTONES = [
             { req: 40, type: 'clicks', desc: 'Clicks boosts atom gain.', formulaText: 'log25(CM*25)', calc: (cm) => logBase(cm * 25, 25) },
             { req: 800, type: 'clicks', desc: 'Clicks boosts energy gain.', formulaText: 'log25(CM*5)', calc: (cm) => logBase(cm * 5, 25) },
@@ -836,8 +888,8 @@
                     T *= getQEMilestoneEffect(25);
                 }
                 if (mult > T) {
-                    let exponent = 0.90; // WAS 0.80
-                    if (state.milestonePoints >= 50) exponent = 0.95; // WAS 0.90
+                    let exponent = 0.90; 
+                    if (state.milestonePoints >= 50) exponent = 0.95; 
                     mult = T + Math.pow(mult - T, exponent);
                 }
             }
@@ -846,10 +898,10 @@
         }
 
         function getAtomsPerSecond() {
-            if (state.clicks < 40) return 0;
+            if (state.clicks < 40) return 0; // Adjusted from 100 to 40
             let gain = 1;
             gain *= MILESTONES[0].calc(state.clicks);
-            if (state.clicks >= 10000) gain *= MILESTONES[3].calc(state.clicks);
+            if (state.clicks >= 7000) gain *= MILESTONES[3].calc(state.clicks); // Adjusted to 7000
             if (state.clicks >= 50e6) gain *= MILESTONES[10].calc(state.clicks);
             if (state.clicks >= 3e8) gain *= 1.12;
             if (state.clicks >= 3e9) gain *= MILESTONES[15].calc(state.clicks);
@@ -871,7 +923,7 @@
         }
 
         function getEnergyPerSecond() {
-            if (state.clicks < 1000) return 0;
+            if (state.clicks < 800) return 0; // Adjusted from 1000 to 800
             let gain = 1;
             gain *= MILESTONES[1].calc(state.clicks);
             if (state.clicks >= 50e6) gain *= MILESTONES[10].calc(state.clicks);
@@ -893,6 +945,32 @@
 
             gain *= getCatalystMult();
             return gain;
+        }
+
+        // --- CORE CLICK TRIGGER TRIGGER FUNCTION ---
+        function doClick() {
+            state.clicks += getClicksPerClick();
+            updateClickLevel();
+            updateUI();
+        }
+
+        // --- VIRTUAL ENTER EVENT HANDLERS ---
+        let virtualEnterInterval = null;
+        function startVirtualEnter() {
+            if (virtualEnterInterval) return;
+            doClick();
+            virtualEnterInterval = setInterval(doClick, 40); // 40ms mimics standard keyboard holding repeat
+        }
+        function stopVirtualEnter() {
+            if (virtualEnterInterval) {
+                clearInterval(virtualEnterInterval);
+                virtualEnterInterval = null;
+            }
+        }
+        function toggleVirtualEnter(checked) {
+            state.virtualEnter = checked;
+            updateUI();
+            saveGame();
         }
 
         function getPowerPerSecond() {
@@ -969,7 +1047,7 @@
             if (state.milestonePoints < 3) return 0;
             let gain = 1;
             
-            // Quantum Milestone 0 adds passive generation based on QE amount
+            // Quantum Milestone 0 adds passive feedback
             gain += getQEMilestoneEffectAdditive(0);
 
             // Quantum Milestone multipliers to QE gain
@@ -984,7 +1062,7 @@
             if (isQEMilestoneUnlocked(26)) gain *= getQEMilestoneEffect(26);
             if (isQEMilestoneUnlocked(32)) gain *= getQEMilestoneEffect(32);
 
-            // New 6 MP boost: +50% per Milestone Point
+            // 6 MP boost: +50% per Milestone Point
             if (state.milestonePoints >= 6) {
                 gain *= (1 + 0.50 * state.milestonePoints);
             }
@@ -1038,80 +1116,79 @@
 
         // --- 8. PRESTIGE AND LIFETIME SAVINGS ---
         function getMPRequirement() {
-    try {
-        let base = 1.55;
-        if (isQEMilestoneUnlocked(6)) {
-            base = getQEMilestoneEffect(6);
-        }
-        // Zabezpieczenie przed wartościami niebędącymi liczbami
-        if (isNaN(base) || base <= 0) base = 1.55;
-        return 1e25 * Math.pow(base, state.milestonePoints);
-    } catch (e) {
-        console.error("Error in getMPRequirement, falling back to base 1.55:", e);
-        return 1e25 * Math.pow(1.55, state.milestonePoints);
-    }
-}
-function performMPReset() {
-    try {
-        const req = getMPRequirement();
-        if (state.clicks >= req) {
-            if (window.confirm("Resetting will convert your clicks into 1 Milestone Point. Are you ready to shift into a new era?")) {
-                state.milestonePoints++;
-                
-                state.clicks = 0;
-                state.clickLevel = 0;
-                state.atoms = 0;
-                state.energy = 0;
-                state.power = 0;
-                state.matter = 0;
-                state.molecules = 0;
-
-                state.upgrades = { surge: 0, autoclick: 0, level: 0, catalyst: 0 };
-                state.bonds = { covalent: 0, ionic: 0, metallic: 0 };
-                
-                state.lastTick = Date.now();
-                updateUI();
+            try {
+                let base = 1.55;
+                if (isQEMilestoneUnlocked(6)) {
+                    base = getQEMilestoneEffect(6);
+                }
+                if (isNaN(base) || base <= 0) base = 1.55;
+                return 1e25 * Math.pow(base, state.milestonePoints);
+            } catch (e) {
+                console.error("Error in getMPRequirement, falling back to base 1.55:", e);
+                return 1e25 * Math.pow(1.55, state.milestonePoints);
             }
-        } else {
-            // Informacja diagnostyczna, gdyby jakimś cudem kliknięto zablokowany przycisk
-            alert(`You do not have enough clicks yet! You need ${format(req)} clicks, but you only have ${format(state.clicks)}.`);
         }
-    } catch (e) {
-        console.error("Error during MP Reset:", e);
-        alert("An error occurred during reset: " + e.message);
-    }
-}
 
-        // --- 8b. UPDATE EXPORT/IMPORT MECHANICS ---
+        function performMPReset() {
+            try {
+                const req = getMPRequirement();
+                if (state.clicks >= req) {
+                    if (window.confirm("Resetting will convert your clicks into 1 Milestone Point. Are you ready to shift into a new era?")) {
+                        state.milestonePoints++;
+                        
+                        state.clicks = 0;
+                        state.clickLevel = 0;
+                        state.atoms = 0;
+                        state.energy = 0;
+                        state.power = 0;
+                        state.matter = 0;
+                        state.molecules = 0;
+
+                        state.upgrades = { surge: 0, autoclick: 0, level: 0, catalyst: 0 };
+                        state.bonds = { covalent: 0, ionic: 0, metallic: 0 };
+                        
+                        state.lastTick = Date.now();
+                        updateUI();
+                    }
+                } else {
+                    alert(`You do not have enough clicks yet! You need ${format(req)} clicks, but you only have ${format(state.clicks)}.`);
+                }
+            } catch (e) {
+                console.error("Error during MP Reset:", e);
+                alert("An error occurred during reset: " + e.message);
+            }
+        }
+
+        // --- 8b. EXPORT/IMPORT AND SAFETY LOADING ---
         function exportSave() {
             try {
                 const saveStr = btoa(JSON.stringify(state));
                 document.getElementById('save-box').value = saveStr;
-                alert("Save exported to the box below! You can copy it.");
             } catch (e) {
                 alert("Failed to export save: " + e.message);
             }
         }
 
-        function importSave() {
-            const saveStr = document.getElementById('save-box').value.trim();
-            if (saveStr) {
-                try {
-                    const parsed = JSON.parse(atob(saveStr));
-                    Object.assign(state, parsed);
-                    if (!state.bonds) state.bonds = { covalent: 0, ionic: 0, metallic: 0 };
-                    if (state.milestonePoints === undefined) state.milestonePoints = 0;
-                    if (state.quantumEnergy === undefined) state.quantumEnergy = 0;
-                    state.lastTick = Date.now();
-                    updateUI();
-                    alert("Save loaded successfully from the text box!");
-                } catch(e) {
-                    alert("Invalid save code in the text box!");
-                }
-            } else {
-                alert("Please paste your save code into the text box first!");
-            }
+function importSave() {
+    const saveStr = document.getElementById('save-box').value.trim();
+    if (saveStr) {
+        try {
+            const parsed = JSON.parse(atob(saveStr));
+            Object.assign(state, parsed);
+            if (!state.bonds) state.bonds = { covalent: 0, ionic: 0, metallic: 0 };
+            if (state.milestonePoints === undefined) state.milestonePoints = 0;
+            if (state.quantumEnergy === undefined) state.quantumEnergy = 0;
+            if (state.virtualEnter === undefined) state.virtualEnter = false;
+            state.lastTick = Date.now();
+            updateUI();
+            alert("Save loaded successfully from the text box!");
+        } catch(e) {
+            alert("Invalid save code in the text box!");
         }
+    } else {
+        alert("Please paste your save code into the text box first!");
+    }
+}
 
         function exportSaveFile() {
             try {
@@ -1142,6 +1219,7 @@ function performMPReset() {
                     if (!state.bonds) state.bonds = { covalent: 0, ionic: 0, metallic: 0 };
                     if (state.milestonePoints === undefined) state.milestonePoints = 0;
                     if (state.quantumEnergy === undefined) state.quantumEnergy = 0;
+                    if (state.virtualEnter === undefined) state.virtualEnter = false;
                     state.lastTick = Date.now();
                     updateUI();
                     alert("Save loaded successfully from file!");
@@ -1180,6 +1258,7 @@ function performMPReset() {
                     if (!state.bonds) state.bonds = { covalent: 0, ionic: 0, metallic: 0 };
                     if (state.milestonePoints === undefined) state.milestonePoints = 0;
                     if (state.quantumEnergy === undefined) state.quantumEnergy = 0;
+                    if (state.virtualEnter === undefined) state.virtualEnter = false;
                 }
             } catch (e) {
                 console.warn("Could not retrieve local storage on file:/// sandbox:", e);
@@ -1225,7 +1304,7 @@ function performMPReset() {
             });
         }
 
-        // --- 10. RE-WRITTEN VISUALLY POLISHED MILESTONES WITH STANDARD CONCATENATION ---
+        // --- 10. RE-WRITTEN VISUALLY POLISHED MILESTONES ---
         function renderMilestones() {
             const container = document.getElementById('milestones-container');
             if (!container) return;
@@ -1323,13 +1402,23 @@ function performMPReset() {
             document.getElementById('next-level-display').innerText = format(getLevelRequirement(state.clickLevel));
             document.getElementById('per-click-display').innerText = format(getClicksPerClick());
 
+            // Handle mobile / virtual Enter button display
+            const veCheckbox = document.getElementById('toggle-virtual-enter');
+            if (veCheckbox) {
+                veCheckbox.checked = !!state.virtualEnter;
+            }
+            const veBtn = document.getElementById('virtual-enter-btn');
+            if (veBtn) {
+                veBtn.style.display = state.virtualEnter ? 'block' : 'none';
+            }
+
             // Render resources and badges
-            if (state.clicks >= 40) {
+            if (state.clicks >= 40) { // Adjusted from 100 to 40
                 document.getElementById('res-atoms').style.display = 'block';
                 document.getElementById('val-atoms').innerText = format(state.atoms);
                 document.getElementById('cps-atoms').innerText = `+${format(getAtomsPerSecond())}/s`;
             }
-            if (state.clicks >= 1000) {
+            if (state.clicks >= 800) { // Adjusted from 1000 to 800
                 document.getElementById('res-energy').style.display = 'block';
                 document.getElementById('val-energy').innerText = format(state.energy);
                 document.getElementById('cps-energy').innerText = `+${format(getEnergyPerSecond())}/s`;
@@ -1402,6 +1491,7 @@ function performMPReset() {
             // Bonds Shop Costs
             const covCost = getBondCost('covalent');
             const covBtn = document.getElementById('bond-covalent');
+            veBtn.innerText = `Lvl ${state.bonds.covalent} (Cost: ${format(covCost)} Mol)`;
             covBtn.innerText = `Lvl ${state.bonds.covalent} (Cost: ${format(covCost)} Mol)`;
             covBtn.disabled = state.molecules < covCost;
 
@@ -1414,6 +1504,9 @@ function performMPReset() {
             const metBtn = document.getElementById('bond-metallic');
             metBtn.innerText = `Lvl ${state.bonds.metallic} (Cost: ${format(metCost)} Mol)`;
             metBtn.disabled = state.molecules < metCost;
+
+            // Restore the static inner text for the virtual enter button
+            if (veBtn) veBtn.innerText = "VIRTUAL ENTER";
 
             // MP Milestones highlighting
             for (let i = 1; i <= 13; i++) {
@@ -1448,9 +1541,7 @@ function performMPReset() {
 
         // --- BUTTON TRIGGER & REGISTERING ---
         document.getElementById('main-click-btn').addEventListener('click', () => {
-            state.clicks += getClicksPerClick();
-            updateClickLevel();
-            updateUI();
+            doClick();
         });
 
         // --- INITIALIZATION CORE BOOTSTRAP ---
