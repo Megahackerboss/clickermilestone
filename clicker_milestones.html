@@ -673,12 +673,12 @@
         // --- 4. DATA ARRAY INITIALIZATION ---
         // Click requirements adjusted slightly down (40, 800, 2200, 7000) - Formulas unchanged
         const MILESTONES = [
-            { req: 40, type: 'clicks', desc: 'Clicks boosts atom gain.', formulaText: 'log25(CM*25)', calc: (cm) => logBase(cm * 25, 25) },
-            { req: 800, type: 'clicks', desc: 'Clicks boosts energy gain.', formulaText: 'log25(CM*5)', calc: (cm) => logBase(cm * 5, 25) },
+            { req: 40, type: 'clicks', desc: 'Clicks boosts atom gain and unlock generating atom.', formulaText: 'log25(CM*25)', calc: (cm) => logBase(cm * 25, 25) },
+            { req: 800, type: 'clicks', desc: 'Clicks boosts energy gain and unlock generating energy.', formulaText: 'log25(CM*5)', calc: (cm) => logBase(cm * 5, 25) },
             { req: 2200, type: 'clicks', desc: 'Clicks boosts itself.', formulaText: 'log8(CM/40)', calc: (cm) => logBase(cm / 40, 8) },
             { req: 7000, type: 'clicks', desc: 'Clicks boosts atom gain again.', formulaText: 'log47(CM)', calc: (cm) => logBase(cm, 47) },
             { req: 5, type: 'level', desc: 'Click Level boosts clicks.', formulaText: 'Lvl/2', calc: (_, lvl) => lvl / 2 },
-            { req: 200000, type: 'clicks', desc: 'Clicks boosts Power.', formulaText: 'log333(CM/33)', calc: (cm) => logBase(cm / 33, 333) },
+            { req: 200000, type: 'clicks', desc: 'Clicks boosts Power and unclock generating Power.', formulaText: 'log333(CM/33)', calc: (cm) => logBase(cm / 33, 333) },
             { req: 500000, type: 'clicks', desc: 'Clicks boosts itself again.', formulaText: 'log10(CM/4000), MAX 20x', calc: (cm) => Math.min(20, logBase(cm / 4000, 10)) },
             { req: 2.5e6, type: 'clicks', desc: 'Clicks boosts itself again.', formulaText: 'log777(CM/7)', calc: (cm) => logBase(cm / 7, 777) },
             { req: 10e6, type: 'clicks', desc: 'Clicks boosts Matter gain.', formulaText: 'log333(CM/3333)', calc: (cm) => logBase(cm / 3333, 333) },
@@ -694,7 +694,7 @@
             { req: 2e9, type: 'clicks', desc: 'Clicks boosts Matter gain again.', formulaText: 'log700K(CM*70)', calc: (cm) => logBase(cm * 70, 700000) },
             { req: 3e9, type: 'clicks', desc: 'Clicks boosts Atom gain again.', formulaText: 'log22.5K(CM*225)', calc: (cm) => logBase(cm * 225, 22500) },
             { req: 4e9, type: 'clicks', desc: 'Clicks boosts Power gain again.', formulaText: 'log88888(CM*888)', calc: (cm) => logBase(cm * 888, 88888) },
-            { req: 6e9, type: 'clicks', desc: 'Clicks boosts Molecules gain.', formulaText: 'log4K(CM/4K)', calc: (cm) => logBase(cm / 4000, 4000) },
+            { req: 6e9, type: 'clicks', desc: 'Clicks boosts Molecules gain and unlock generating Molecules.', formulaText: 'log4K(CM/4K)', calc: (cm) => logBase(cm / 4000, 4000) },
             { req: 1e10, type: 'clicks', desc: 'x1.75 Clicks Gain.', formulaText: 'Static', calc: () => 1.75 },
             { req: 2e10, type: 'clicks', desc: 'Clicks boosts Energy and Matter gain.', formulaText: 'log5M(CM*500)', calc: (cm) => logBase(cm * 500, 5000000) },
             { req: 3e10, type: 'clicks', desc: 'Triple Atom Gain.', formulaText: 'Static', calc: () => 3.0 },
